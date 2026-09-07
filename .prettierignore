@@ -6,3 +6,4 @@ test-results/
 package-lock.json
 press-start-curriculum.html
 docs/
+.env*
