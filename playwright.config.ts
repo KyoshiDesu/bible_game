@@ -3,6 +3,8 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = Number(process.env.PORT ?? 3000);
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORT}`;
 
+const CONTENT_SPEC = /prep-content\.spec\.ts/;
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -15,9 +17,20 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   projects: [
-    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    // Content parity is an HTTP check over the rendered HTML, so it runs once
+    // rather than once per browser.
+    { name: "content", testMatch: CONTENT_SPEC },
+    {
+      name: "chromium",
+      testIgnore: CONTENT_SPEC,
+      use: { ...devices["Desktop Chrome"] },
+    },
     // Participants are on phones; the room view is tested where it is used.
-    { name: "mobile", use: { ...devices["Pixel 7"] } },
+    {
+      name: "mobile",
+      testIgnore: CONTENT_SPEC,
+      use: { ...devices["Pixel 7"] },
+    },
   ],
   // Tests run against a production build: the prep surface is statically
   // rendered, and dev-mode rendering would not exercise that.

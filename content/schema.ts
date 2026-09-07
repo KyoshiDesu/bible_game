@@ -99,6 +99,54 @@ export const sessionSchema = z.strictObject({
   slides: z.array(slideSchema).min(1),
 });
 
+export const overviewSchema = z.strictObject({
+  lede: authored,
+  /** The unit band under the semester track; spans sum to the ten sessions. */
+  units: z.array(
+    z.strictObject({ span: z.number().int().positive(), label: plain }),
+  ),
+  argument: z.strictObject({ heading: plain, body: authored }),
+  /** The one thing to protect, as a callout. */
+  protect: authored,
+  shape: z.strictObject({
+    heading: plain,
+    rows: z.array(
+      z.strictObject({ minutes: plain, segment: plain, purpose: authored }),
+    ),
+    note: authored,
+  }),
+  startHere: z.strictObject({
+    heading: plain,
+    cards: z.array(
+      z.strictObject({
+        heading: plain,
+        body: authored,
+        linkHref: plain,
+        linkLabel: plain,
+      }),
+    ),
+  }),
+});
+
+export const pageCopySchema = z.strictObject({
+  caseBank: z.strictObject({ lede: authored, callout: authored }),
+  sources: z.strictObject({
+    lede: authored,
+    callout: authored,
+    closing: z.strictObject({ heading: plain, body: authored }),
+  }),
+  handbook: z.strictObject({ lede: authored, anchorTableHeading: plain }),
+  ruleOfPlay: z.strictObject({
+    lede: authored,
+    callout: authored,
+    worksheetHeading: plain,
+    /** The "written on … reviewed on … with …" line, printed with blanks. */
+    dated: plain,
+    promptsHeading: plain,
+    promptsNote: authored,
+  }),
+});
+
 export const resourceSchema = z.strictObject({
   title: plain,
   /** Publisher and year, or a domain — whichever identifies the source. */
@@ -140,6 +188,8 @@ export type CaseBankEntry = z.infer<typeof caseBankEntrySchema>;
 export type Slide = z.infer<typeof slideSchema>;
 export type PlanStep = z.infer<typeof planStepSchema>;
 export type Session = z.infer<typeof sessionSchema>;
+export type Overview = z.infer<typeof overviewSchema>;
+export type PageCopy = z.infer<typeof pageCopySchema>;
 export type Resource = z.infer<typeof resourceSchema>;
 export type ResourceGroup = z.infer<typeof resourceGroupSchema>;
 export type GlossaryEntry = z.infer<typeof glossaryEntrySchema>;

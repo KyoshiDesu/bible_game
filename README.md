@@ -12,11 +12,12 @@ Plan: [`docs/superpowers/plans/2026-09-07-press-start-web-app-plan.md`](docs/sup
 
 ## Status
 
-**Phase 1 — content extraction and typing.** The scaffold, design tokens,
-test and CI harness, and Supabase client wiring are in place, and the
-curriculum is now typed modules under `content/` rather than a single HTML
-file. Nothing renders it yet: the home page is still a specimen of the ported
-palette and type, and phase 2 replaces it with the prep surface.
+**Phase 2 — prep surface.** The leader's site is complete and static: the
+overview, ten sessions across six panes each, the handbook, the case bank,
+sources, and the printable rule-of-play worksheet, with client-side search over
+the whole curriculum. Seventy pages, no auth and no database — phase 3 adds
+identity and groups, and phase 6 adds the presenter view that projects the
+slides this surface only lays out.
 
 ## Getting started
 
@@ -52,25 +53,34 @@ variable it wanted.
 Playwright needs its browser once: `npx playwright install chromium`.
 
 CI runs typecheck, lint, format check, content validation, unit tests, and
-build on every pull request, with end-to-end tests in a second job.
+build on every pull request, with end-to-end tests in a second job. The
+end-to-end suite includes a content-parity check that asserts every field of
+every session reaches the DOM, and an axe pass over one page of each kind.
 
 ## Layout
 
 ```
-app/            routes; route groups per surface arrive in phases 2 and 6
-  globals.css   the design tokens — the palette lives here, not in components
-  fonts.ts      Fraunces, Karla, IBM Plex Mono via next/font
-content/        the curriculum as typed data — no React, no formatting
-  schema.ts     Zod schemas and the types every surface renders against
-  sessions/     one module per session, plus the ordered index
-components/ui/  shadcn/ui components
-lib/supabase/   client factories: browser, server, and session refresh
-lib/            typed logic; no React, no SQL at the call site
-middleware.ts   refreshes the auth token on every rendering request
-tests/          unit tests that are not colocated with a module
-e2e/            Playwright specs
-docs/           design and plan
+app/
+  globals.css        the design tokens — the palette lives here, not in components
+  fonts.ts           Fraunces, Karla, IBM Plex Mono via next/font
+  (prep)/            the leader's surface: overview, sessions, handbook, materials
+    sessions/[number]/  a route per pane, so a pane can be linked to
+  search-index.json/ the search index, prerendered to a static file
+content/             the curriculum as typed data — no React, no formatting
+  schema.ts          Zod schemas and the types every surface renders against
+  sessions/          one module per session, plus the ordered index
+components/prep/     the prep surface's own components
+components/ui/       shadcn/ui components
+lib/supabase/        client factories: browser, server, and session refresh
+lib/                 typed logic; no React, no SQL at the call site
+middleware.ts        refreshes the auth token on every rendering request
+tests/               unit tests that are not colocated with a module
+e2e/                 Playwright specs
+docs/                design and plan
 ```
+
+The presenter (`app/(present)`) and participant (`app/(play)`) route groups
+arrive in phases 6 and 3.
 
 ## The source file
 
@@ -93,6 +103,16 @@ in the history of this repository if it is ever needed again.
   possibly-undefined and the code has to say what it does about that.
 - Colour, type, and shadow come from tokens in `app/globals.css`. A hex code in
   a component is a bug.
+- Three ported tokens — `--ink-faint`, `--brass`, `--on-violet-faint` — do not
+  reach WCAG AA as text at the sizes this curriculum sets small print. They are
+  left exactly as the original authored them and are used for rules, borders,
+  the focus ring, and the semester-track gradient, where the 3:1 non-text
+  threshold applies and they pass. Text uses the `-legible` siblings and
+  `--brass-on-violet` instead. `tests/contrast.test.ts` holds the ratios;
+  `e2e/prep-a11y.spec.ts` runs axe over the rendered pages.
+- Every page under `app/(prep)` renders statically. Search reads a prerendered
+  `/search-index.json` fetched on the first keystroke, rather than bundling the
+  curriculum into every page's JavaScript.
 - Dark mode is deliberately not implemented. The curriculum has one palette;
   the presenter view gets its dark surfaces from the violet tokens.
 - Import Radix primitives from their own packages (`@radix-ui/react-slot`),
