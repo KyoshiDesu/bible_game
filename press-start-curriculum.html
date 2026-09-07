@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Press Start — A Semester on Video Games and Faith</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Karla:ital,wght@0,300..800;1,300..700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#221A38;
+  --ink-soft:#4A4166;
+  --ink-faint:#7B7397;
+  --violet-deep:#191231;
+  --violet-mid:#2E2450;
+  --page:#F1EFF4;
+  --surface:#FBFAFD;
+  --surface-2:#EBE7F0;
+  --brass:#A8762C;
+  --brass-lite:#E9DCC2;
+  --teal:#1F6E6A;
+  --teal-lite:#D8EAE7;
+  --clay:#9B3B3B;
+  --clay-lite:#F3DEDC;
+  --vellum:#F4EFE3;
+  --rule:#D9D4E2;
+  --shadow:0 1px 0 rgba(34,26,56,.06), 0 8px 24px -18px rgba(34,26,56,.5);
+  --sans:"Karla",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--page);color:var(--ink);
+  font-family:var(--sans);font-size:16.5px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--teal)}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+:focus-visible{outline:2.5px solid var(--brass);outline-offset:2px;border-radius:2px}
+
+/* ---------- shell ---------- */
+.shell{display:grid;grid-template-columns:274px minmax(0,1fr);min-height:100vh}
+.rail{
+  background:var(--violet-deep);color:#CFC6E4;position:sticky;top:0;height:100vh;
+  overflow-y:auto;padding:22px 0 40px;
+}
+.brand{padding:0 22px 18px;border-bottom:1px solid rgba(255,255,255,.09);margin-bottom:14px}
+.brand h1{
+  font-family:var(--serif);font-optical-sizing:auto;
+  font-size:27px;line-height:1.05;margin:0 0 6px;color:#FBF7EE;font-weight:600;
+  font-variation-settings:"SOFT" 20,"WONK" 1;
+}
+.brand p{margin:0;font-size:12.5px;color:#9A90BC;line-height:1.45}
+.railsearch{padding:0 18px 14px}
+.railsearch input{
+  width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  color:#EDE7FA;border-radius:7px;padding:8px 10px;font-family:var(--sans);font-size:14px;
+}
+.railsearch input::placeholder{color:#8A80AC}
+.navgroup{padding:14px 18px 4px;font-size:11.5px;letter-spacing:.06em;color:#7A709E;font-weight:700}
+.rail a.navitem{
+  display:flex;gap:10px;align-items:baseline;padding:7px 18px;color:#CFC6E4;
+  text-decoration:none;font-size:14.5px;border-left:3px solid transparent;
+}
+.rail a.navitem:hover{background:rgba(255,255,255,.06);color:#fff}
+.rail a.navitem.on{background:rgba(168,118,44,.16);border-left-color:var(--brass);color:#FBF7EE;font-weight:600}
+.rail a.navitem.hide{display:none}
+.navnum{font-family:var(--mono);font-size:11.5px;color:var(--brass);min-width:18px}
+.railfoot{padding:18px 18px 0;margin-top:16px;border-top:1px solid rgba(255,255,255,.09);font-size:12px;color:#7A709E}
+
+/* ---------- main ---------- */
+.main{padding:0 0 90px;min-width:0}
+.wrap{max-width:860px;margin:0 auto;padding:0 34px}
+.topbar{
+  position:sticky;top:0;z-index:40;background:rgba(241,239,244,.93);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--rule);
+}
+.topbar .wrap{display:flex;align-items:center;gap:12px;padding-top:11px;padding-bottom:11px}
+.crumb{font-size:13px;color:var(--ink-faint);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn{
+  background:var(--surface);border:1px solid var(--rule);border-radius:8px;
+  padding:6px 12px;font-size:13.5px;color:var(--ink);font-weight:600;box-shadow:var(--shadow);
+}
+.btn:hover{border-color:var(--ink-faint)}
+.btn.primary{background:var(--violet-mid);border-color:var(--violet-mid);color:#FBF7EE}
+.btn.primary:hover{background:var(--ink)}
+.btn.brass{background:var(--brass);border-color:var(--brass);color:#fff}
+
+section.view{display:none;padding-top:34px}
+section.view.on{display:block}
+
+h2.big{
+  font-family:var(--serif);font-size:clamp(30px,4.4vw,44px);line-height:1.04;
+  font-weight:600;margin:0 0 10px;font-variation-settings:"SOFT" 22,"WONK" 1;letter-spacing:-.012em;
+}
+h3{font-family:var(--serif);font-size:23px;font-weight:600;margin:34px 0 10px;line-height:1.18}
+h4{font-family:var(--sans);font-size:15px;font-weight:800;margin:22px 0 7px;color:var(--ink-soft)}
+p{max-width:70ch}
+.lede{font-size:18.5px;color:var(--ink-soft);max-width:64ch;line-height:1.55}
+
+/* ---------- semester track (hero) ---------- */
+.track{margin:30px 0 8px;padding:26px 0 6px;position:relative}
+.track:before{content:"";position:absolute;left:0;right:0;top:47px;height:2px;background:linear-gradient(90deg,var(--brass-lite),var(--brass),var(--teal))}
+.tracknodes{display:grid;grid-template-columns:repeat(10,1fr);gap:0;position:relative}
+.node{
+  background:none;border:0;padding:0;text-align:left;display:block;position:relative;
+}
+.nodedot{
+  width:19px;height:19px;border-radius:50%;background:var(--surface);
+  border:2.5px solid var(--brass);margin:12px 0 10px;transition:transform .18s ease,background .18s ease;
+}
+.node:hover .nodedot,.node:focus-visible .nodedot{background:var(--brass);transform:scale(1.35)}
+.nodenum{font-family:var(--mono);font-size:11px;color:var(--brass);font-weight:600}
+.nodelabel{font-size:11.5px;line-height:1.25;color:var(--ink-soft);padding-right:8px;display:block}
+.node:hover .nodelabel{color:var(--ink)}
+.unitband{display:grid;grid-template-columns:repeat(10,1fr);font-size:11px;color:var(--ink-faint);margin-top:14px}
+.unitband span{border-top:1px solid var(--rule);padding-top:6px}
+
+/* ---------- cards & blocks ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
+.card h4{margin-top:0}
+.callout{border-left:4px solid var(--teal);background:var(--teal-lite);padding:14px 18px;border-radius:0 10px 10px 0;margin:20px 0}
+.callout.warn{border-left-color:var(--clay);background:var(--clay-lite)}
+.callout.brasscall{border-left-color:var(--brass);background:var(--brass-lite)}
+.callout p{margin:0;max-width:66ch}
+.callout p+p{margin-top:9px}
+
+/* scripture */
+.verse{
+  background:var(--vellum);border:1px solid #E2D9C4;border-radius:11px;padding:17px 20px;margin:15px 0;
+}
+.verse .ref{font-family:var(--sans);font-size:12.5px;font-weight:800;color:var(--brass);margin-bottom:6px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.verse .ref a{color:var(--ink-faint);font-weight:500;text-decoration:none;border-bottom:1px dotted var(--ink-faint);font-size:11.5px}
+.verse blockquote{
+  margin:0;font-family:var(--serif);font-size:18px;line-height:1.5;color:var(--ink);
+  font-variation-settings:"SOFT" 18;
+}
+.verse .gist{margin:9px 0 0;font-size:14px;color:var(--ink-soft)}
+.reflist{list-style:none;padding:0;margin:12px 0}
+.reflist li{padding:9px 0;border-top:1px solid var(--rule);display:grid;grid-template-columns:180px 1fr;gap:14px;font-size:14.5px}
+.reflist li b{font-family:var(--sans);color:var(--brass);font-weight:800;font-size:13.5px}
+
+/* lesson plan timeline */
+.plan{list-style:none;padding:0;margin:16px 0}
+.plan li{display:grid;grid-template-columns:78px 1fr;gap:16px;border-top:1px solid var(--rule);padding:15px 0}
+.plan .clock{font-family:var(--mono);font-size:12.5px;color:var(--teal);font-weight:600;padding-top:2px}
+.plan .clock em{display:block;font-style:normal;color:var(--ink-faint);font-size:11px;margin-top:3px}
+.plan h5{margin:0 0 5px;font-size:15.5px;font-weight:800}
+.plan .script{margin:8px 0 0;padding:10px 13px;background:var(--surface-2);border-radius:8px;font-size:14px;color:var(--ink-soft)}
+.plan .script b{color:var(--ink)}
+.plan ul{margin:7px 0 0;padding-left:19px;font-size:14.5px}
+.plan ul li{display:list-item;border:0;padding:3px 0;grid-template-columns:none}
+
+/* tabs */
+.tabs{display:flex;gap:3px;flex-wrap:wrap;border-bottom:1px solid var(--rule);margin:26px 0 4px}
+.tab{
+  background:none;border:0;border-bottom:3px solid transparent;padding:9px 13px;
+  font-size:14px;font-weight:600;color:var(--ink-faint);margin-bottom:-1px;
+}
+.tab:hover{color:var(--ink)}
+.tab.on{color:var(--ink);border-bottom-color:var(--brass)}
+.pane{display:none;padding-top:6px}
+.pane.on{display:block}
+
+/* session header */
+.shead{display:flex;gap:18px;align-items:flex-start;margin-bottom:6px}
+.sessnum{
+  font-family:var(--mono);font-size:12px;font-weight:600;color:#fff;background:var(--violet-mid);
+  border-radius:8px;padding:9px 11px;line-height:1;margin-top:9px;white-space:nowrap;
+}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.chip{font-size:12px;background:var(--surface);border:1px solid var(--rule);border-radius:999px;padding:4px 11px;color:var(--ink-soft)}
+.chip.t{background:var(--teal-lite);border-color:#B9D8D4;color:var(--teal)}
+.chip.b{background:var(--brass-lite);border-color:#DDCBA6;color:#7B5518}
+
+/* case study */
+.case{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--violet-mid);border-radius:0 12px 12px 0;padding:18px 22px;margin:18px 0;box-shadow:var(--shadow)}
+.case h5{margin:0 0 4px;font-family:var(--serif);font-size:20px;font-weight:600}
+.case .tagline{font-size:12.5px;color:var(--ink-faint);margin:0 0 11px}
+.case p.story{font-size:15.5px;line-height:1.6;margin:0 0 12px}
+.case ol{margin:0;padding-left:20px;font-size:15px}
+.case ol li{padding:3px 0}
+.case .leaderkey{margin-top:13px;font-size:14px;background:var(--brass-lite);border-radius:8px;padding:11px 14px;color:#5E4413}
+.case .leaderkey b{color:#3F2C08}
+
+.qlist{counter-reset:q;list-style:none;padding:0;margin:14px 0}
+.qlist li{counter-increment:q;padding:11px 0 11px 40px;border-top:1px solid var(--rule);position:relative;font-size:15.5px}
+.qlist li:before{content:counter(q);position:absolute;left:0;top:11px;font-family:var(--mono);font-size:12px;color:var(--brass);font-weight:600;background:var(--brass-lite);border-radius:6px;padding:3px 7px;line-height:1}
+
+/* slide thumbnails */
+.thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:13px;margin:18px 0}
+.thumb{
+  background:var(--violet-deep);color:#EDE6D6;border:0;border-radius:10px;padding:14px;text-align:left;
+  aspect-ratio:16/10;overflow:hidden;display:flex;flex-direction:column;gap:6px;position:relative;
+}
+.thumb:hover{outline:2px solid var(--brass)}
+.thumb .tn{font-family:var(--mono);font-size:9.5px;color:var(--brass)}
+.thumb .tt{font-family:var(--serif);font-size:14px;line-height:1.2;font-weight:600}
+.thumb .tb{font-size:10px;color:#A79ECA;line-height:1.35;overflow:hidden}
+
+/* presenter */
+.stage{position:fixed;inset:0;background:var(--violet-deep);z-index:200;display:none;flex-direction:column;color:#F4EFE3}
+.stage.on{display:flex}
+.slide{flex:1;display:flex;flex-direction:column;justify-content:center;padding:min(7vh,70px) min(8vw,90px);max-width:1180px;margin:0 auto;width:100%}
+.slide .kicker{font-family:var(--mono);font-size:13px;color:var(--brass);margin-bottom:18px}
+.slide h1{font-family:var(--serif);font-size:clamp(30px,5.4vw,60px);line-height:1.05;margin:0 0 22px;font-weight:600;font-variation-settings:"SOFT" 22,"WONK" 1}
+.slide .body{font-size:clamp(17px,2.1vw,25px);line-height:1.5;color:#DFD7C4;max-width:26em}
+.slide .body ul{padding-left:1.1em;margin:0}
+.slide .body li{margin:.5em 0}
+.slide blockquote{font-family:var(--serif);font-size:clamp(20px,3vw,34px);line-height:1.35;margin:0;color:#F6F0E2}
+.slide .attrib{margin-top:16px;font-family:var(--mono);font-size:14px;color:var(--brass)}
+.stagebar{display:flex;align-items:center;gap:14px;padding:12px 22px;border-top:1px solid rgba(255,255,255,.12);font-size:13px;color:#9A90BC}
+.stagebar .btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#EDE6D6;box-shadow:none}
+.dots{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.dot{width:26px;height:5px;border-radius:3px;background:rgba(255,255,255,.2);border:0;padding:0}
+.dot.on{background:var(--brass)}
+.pnotes{background:rgba(0,0,0,.3);border-top:1px solid rgba(255,255,255,.12);padding:14px 22px;font-size:15px;color:#CFC6E4;display:none;max-height:26vh;overflow:auto}
+.pnotes.on{display:block}
+.pnotes b{color:var(--brass)}
+
+/* timer */
+.timerbox{position:fixed;right:20px;bottom:20px;z-index:120;width:262px;background:var(--violet-deep);color:#EDE6D6;border-radius:14px;padding:15px 17px;box-shadow:0 18px 44px -16px rgba(25,18,49,.7);display:none}
+.timerbox.on{display:block}
+.timerbox .now{font-size:13px;color:var(--brass);font-weight:700;min-height:19px}
+.timerbox .cd{font-family:var(--mono);font-size:38px;line-height:1.1;font-variant-numeric:tabular-nums;margin:2px 0 4px}
+.timerbox .nxt{font-size:12px;color:#9A90BC;min-height:17px}
+.timerbox .bar{height:6px;background:rgba(255,255,255,.16);border-radius:3px;margin:11px 0 12px;overflow:hidden}
+.timerbox .bar i{display:block;height:100%;background:var(--brass);width:0}
+.timerbox .row{display:flex;gap:7px}
+.timerbox .row button{flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#EDE6D6;border-radius:7px;padding:6px;font-size:12.5px;font-weight:600}
+
+/* tables & resources */
+.res{margin:14px 0;border-top:1px solid var(--rule)}
+.resitem{padding:14px 0;border-bottom:1px solid var(--rule)}
+.resitem .rt{font-weight:800;font-size:15.5px}
+.resitem .rw{font-size:12.5px;color:var(--ink-faint);margin:2px 0 6px}
+.resitem .rd{font-size:14.5px;color:var(--ink-soft);margin:0;max-width:70ch}
+.lean{display:inline-block;font-size:11px;border-radius:5px;padding:2px 7px;margin-left:7px;vertical-align:1.5px}
+.lean.n{background:var(--teal-lite);color:var(--teal)}
+.lean.c{background:var(--brass-lite);color:#7B5518}
+.lean.s{background:var(--surface-2);color:var(--ink-soft)}
+
+table.tbl{border-collapse:collapse;width:100%;font-size:14.5px;margin:14px 0}
+table.tbl th,table.tbl td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--rule);vertical-align:top}
+table.tbl th{font-size:12.5px;color:var(--ink-faint);font-weight:800}
+table.tbl tr:hover td{background:var(--surface)}
+
+/* worksheet */
+.ws{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:22px 24px;margin:18px 0}
+.wsline{border-bottom:1.5px dotted var(--ink-faint);height:30px;margin:9px 0}
+.searchhit{display:block;padding:11px 14px;border:1px solid var(--rule);border-radius:9px;margin:9px 0;background:var(--surface);text-decoration:none;color:var(--ink)}
+.searchhit:hover{border-color:var(--brass)}
+.searchhit b{display:block;font-size:15px}
+.searchhit span{font-size:13px;color:var(--ink-faint)}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;height:auto}
+  .grid2{grid-template-columns:1fr}
+  .tracknodes,.unitband{grid-template-columns:repeat(5,1fr);gap:10px 0}
+  .track:before{display:none}
+  .nodedot{margin:8px 0 8px}
+  .wrap{padding:0 20px}
+  .reflist li{grid-template-columns:1fr;gap:2px}
+  .timerbox{right:12px;left:12px;width:auto;bottom:12px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+  .rail,.topbar,.timerbox,.tabs,.thumbs,.stage{display:none!important}
+  body{background:#fff;font-size:11.5pt}
+  .shell{display:block}
+  .pane{display:block!important}
+  .card,.case,.verse{break-inside:avoid;box-shadow:none}
+  section.view{display:none!important}
+  section.view.on{display:block!important}
+  .wrap{max-width:none;padding:0}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="rail" id="rail">
+    <div class="brand">
+      <h1>Press Start</h1>
+      <p>Video games, technology, and the life of faith — a ten-session small group semester.</p>
+    </div>
+    <div class="railsearch"><input id="q" type="search" placeholder="Search sessions, verses, cases…" aria-label="Search the curriculum"></div>
+    <div id="navlist"></div>
+    <div class="railfoot">Scripture shown inline is the World English Bible (public domain), so this page can be copied and printed freely. Swap in your congregation's translation before you teach.</div>
+  </nav>
+  <div class="main">
+    <div class="topbar"><div class="wrap">
+      <span class="crumb" id="crumb">Overview</span>
+      <button class="btn" id="timerBtn">Session timer</button>
+      <button class="btn" onclick="window.print()">Print this page</button>
+      <button class="btn primary" id="presentBtn" style="display:none">Present slides</button>
+    </div></div>
+    <div id="views"></div>
+  </div>
+</div>
+
+<div class="timerbox" id="timerbox">
+  <div class="now" id="tNow">Not started</div>
+  <div class="cd" id="tCd">40:00</div>
+  <div class="nxt" id="tNext">Press Start to run the 40-minute plan</div>
+  <div class="bar"><i id="tBar"></i></div>
+  <div class="row">
+    <button id="tGo">Start</button><button id="tSkip">Next part</button><button id="tReset">Reset</button>
+  </div>
+</div>
+
+<div class="stage" id="stage" role="dialog" aria-label="Slide presenter">
+  <div class="slide" id="slideBody"></div>
+  <div class="pnotes" id="pnotes"></div>
+  <div class="stagebar">
+    <button class="btn" id="sPrev">← Back</button>
+    <button class="btn" id="sNext">Next →</button>
+    <div class="dots" id="dots"></div>
+    <span id="sCount"></span>
+    <button class="btn" id="sNotes">Speaker notes</button>
+    <button class="btn" id="sExit">Close</button>
+  </div>
+</div>
+
+<script>
+const BG = r => "https://www.biblegateway.com/passage/?search=" + encodeURIComponent(r);
+
+const SESSIONS = [
+{
+n:1, unit:"Unit One · Foundations", title:"Press Start",
+subtitle:"Moving from “is gaming allowed?” to “what is gaming making of me?”",
+bigIdea:"The Bible rarely asks whether an activity is permitted. It asks what that activity is forming, who it is serving, and whether love survives it.",
+icebreaker:{
+  title:"First save file",
+  how:"Around the circle, each person names the first video game they remember playing, roughly how old they were, and one word for how it made them feel. Leader goes last and keeps it to twenty seconds each.",
+  why:"It surfaces the emotional history everyone already has with games before any theology is applied, and it quietly tells you who in the room is a heavy player and who is an outsider looking in."
+},
+anchor:{ref:"1 Corinthians 10:23-24, 31",
+  text:"“All things are lawful for me,” but not all things are profitable. “All things are lawful for me,” but not all things build up. Let no one seek his own, but each one his neighbor's good. … Whether therefore you eat, or drink, or whatever you do, do all to the glory of God.",
+  gist:"Paul answers a permission question with a formation question. He does not deny their freedom; he changes the measuring stick from lawful to profitable, building up, and neighbor-serving."},
+support:[
+  {ref:"Romans 12:2", gist:"Two forces are always competing to shape you: the pattern of the age, and the renewing of the mind. Nothing you do repeatedly is formation-neutral."},
+  {ref:"Colossians 3:17", gist:"“Whatever you do, in word or in deed, do all in the name of the Lord Jesus.” Play is included in “whatever.” This is what makes gaming a theological subject and not just a hobby."},
+  {ref:"1 Corinthians 6:12", gist:"The parallel verse. Paul adds a second test — “I will not be brought under the power of anything” — which will drive Session 6."}
+],
+teaching:[
+ {h:"Three postures Christians take toward games",body:[
+   "Condemn — games are a worldly waste; the mature thing is to stop. Its strength is that it takes formation seriously. Its weakness is that it can only say no, so it produces either guilt or secrecy.",
+   "Consume — it's just entertainment; don't overthink it. Its strength is that it refuses to make rules God didn't make. Its weakness is that it assumes the thing shaping you for fifteen hours a week is shaping nothing.",
+   "Cultivate — receive it as a made thing, enjoy what is good, name what is bent, set limits in love. This is harder, slower, and the only posture that can be sustained for a lifetime."]},
+ {h:"Paul's actual test",body:[
+   "In 1 Corinthians 10 the Corinthians want a yes-or-no ruling on meat. Paul grants the freedom in the first half of the sentence and then makes the freedom almost irrelevant with the second half.",
+   "Three questions replace the permission question: Is it profitable to me? Does it build up the church? Am I seeking my neighbor's good or only my own?",
+   "Notice what this does to our topic. “Can Christians play video games?” is answered — yes. And answering it settles almost nothing that matters."]},
+ {h:"Why this room, this semester",body:[
+   "This is not a series about quitting. Several of us will play more thoughtfully at the end than we do now, and that is a legitimate outcome.",
+   "It is a series about honesty. For the next five months we are going to look at the thing we already do and ask what it is doing back.",
+   "Ground rule for the semester: no one is here to defend their library and no one is here to prosecute anyone else's."]}
+],
+plan:[
+ {clock:"0:00", mins:5, h:"Welcome and icebreaker", script:"Open by naming the series plainly: <b>ten sessions, twice a month, on what video games are doing to our faith — for good and for ill.</b> Then run “First save file.”", bullets:["Say out loud that gamers and non-gamers are both needed in the room.","Keep each answer to twenty seconds; you have nine more sessions."]},
+ {clock:"0:05", mins:3, h:"Anchor reading and prayer", script:"Have someone read <b>1 Corinthians 10:23-24 and 31</b> aloud. Ask for one observation before you say anything. Pray briefly for honesty rather than for the right answer.", bullets:["Resist explaining the verse yet — the teaching block does that."]},
+ {clock:"0:08", mins:10, h:"Teaching: from permission to formation", script:"Walk the three postures, then Paul's test, then the ground rule. <b>Do not resolve whether any specific game is acceptable tonight</b> — the whole semester is the answer.", bullets:["Draw the three postures on a board if you have one.","Land the line: “Can Christians play video games? Yes. And that settles almost nothing.”"]},
+ {clock:"0:18", mins:12, h:"Case study and discussion", script:"Read <b>“Delete the Library?”</b> aloud, or hand it to a volunteer. Work the three questions. Expect the group to want to give Marcus a rule; push them toward giving him a set of questions instead.", bullets:["If the group is large, split into pairs for four minutes, then gather answers."]},
+ {clock:"0:30", mins:6, h:"Application and the semester challenge", script:"Assign the two-week hour count. Say clearly: <b>this is data, not judgment.</b> Nobody reports a number they don't want to report; everyone reports whether the number surprised them.", bullets:["Show them where the count lives on their console, phone, or Steam profile.","Write the group's ground rule somewhere visible and keep it up all semester."]},
+ {clock:"0:36", mins:4, h:"Close and preview", script:"Preview Session 2: <b>“Made to Make, Made to Play”</b> — before we critique games, we have to say why play is good at all. Close in prayer.", bullets:["Ask one person to prepare to read Genesis 1:26-28 next time."]}
+],
+cases:[
+ {title:"Delete the Library?", tagline:"Primary case · new believer, 200 games, one sincere question",
+  story:"Marcus came to faith eight months ago. He is twenty-four, works nights, and has about two hundred games in his Steam library — most of them harmless, a few of them he now feels uneasy about. Last week an older man at church told him that if he were serious about Jesus he would delete the whole account “and not look back.” Marcus is genuinely willing. He is also quietly grieving, because gaming is where his three closest friendships live, and two of those friends are not Christians. He asks your group what he should do.",
+  questions:["Which of Paul's three tests — profitable, builds up, seeks the neighbor's good — is most relevant to Marcus's situation, and which is least?",
+   "The older man's advice is not stupid; there are cases where deleting everything is right. What would have to be true of Marcus for that to be the right counsel?",
+   "If Marcus keeps his account, what would you want him to decide before he plays again tonight?"],
+  leaderKey:"<b>Where this should land:</b> the group's instinct will be to produce a verdict. The better outcome is a short list of questions Marcus can carry — and a specific person from the group who will check in with him. Watch for two failure modes: a blanket permission that ignores that <i>a few of them he now feels uneasy about</i>, and a blanket prohibition that treats his three real friendships as disposable."},
+ {title:"The Household Rule", tagline:"Alternate case · a family, two teenagers, one blunt policy",
+  story:"A couple in the church has just announced a new house rule: no games on school nights, two hours on Saturday, and no online voice chat with anyone the parents have not met. Their fifteen-year-old thinks it is unjust and has started playing at a friend's house without telling them. Their twelve-year-old is fine with it. The mother asks your group whether they overreached.",
+  questions:["Is the problem the rule, or the way the rule arrived?","What is the difference between a boundary that forms a child and one that only relocates the behavior?","What would you keep from this rule and what would you change?"],
+  leaderKey:"<b>Where this should land:</b> good limits are usually negotiated, explained, and time-bound. A rule announced without a reason trains compliance or concealment, not discernment — which is exactly the point of Session 4."}
+],
+discussion:[
+ "Before tonight, which of the three postures — condemn, consume, cultivate — was closest to your own? Be honest; nobody grades this.",
+ "Paul says lawful things can still be unprofitable. Name one thing in your life that is completely permitted and completely unhelpful for you personally.",
+ "Who taught you what you believe about games — a parent, a pastor, the internet, or nobody at all?",
+ "If a friend outside the church watched you play for an evening, what would they conclude that you love?",
+ "What are you hoping this series does <i>not</i> do to you?"
+],
+takehome:{
+ challenge:"Track your actual gaming hours for the next two weeks. Use the console, phone, or Steam counter — not your memory. Write the number down and do nothing else with it yet.",
+ practice:"Before you play this week, pray one sentence: “Lord, whatever I do, let me do it in your name.” Then play. Notice whether the prayer changed anything.",
+ prep:"Read Genesis 1:26-28 and Genesis 2:15 before Session 2. Ask yourself: does the Bible think making things is a good idea?"
+},
+slides:[
+ {kicker:"Session 1 of 10 · Foundations", h:"Press Start", body:"<div class='body'>Video games, technology, and the life of faith</div>", notes:"Set expectations in two sentences: ten sessions, twice a month, forty minutes. Not a series about quitting. A series about honesty."},
+ {kicker:"The wrong opening question", h:"“Am I allowed to play?”", body:"<div class='body'>It has an answer.<br>The answer settles almost nothing.</div>", notes:"Let this sit for a beat. Most people in the room have only ever asked the permission question, and it has either given them a clean conscience or a guilty one — never a plan."},
+ {kicker:"Anchor · 1 Corinthians 10:23-24", h:"", body:"<blockquote>“All things are lawful for me,” but not all things are profitable. “All things are lawful for me,” but not all things build up. Let no one seek his own, but each one his neighbor's good.</blockquote><div class='attrib'>1 Corinthians 10:23-24, WEB</div>", notes:"Point out the structure: Paul quotes their slogan, grants it, and then twice refuses to let it be the last word. Profitable — to me. Builds up — the church. Neighbor's good — the other."},
+ {kicker:"Posture one", h:"Condemn", body:"<div class='body'>Games are a worldly waste. The mature thing is to stop.<br><br>Takes formation seriously.<br>Can only ever say no — so it produces guilt or secrecy.</div>", notes:"Be fair to this view. It is usually held by people who have watched someone they love disappear into a screen."},
+ {kicker:"Posture two", h:"Consume", body:"<div class='body'>It's entertainment. Don't overthink it.<br><br>Refuses to invent rules God didn't make.<br>Assumes fifteen hours a week is forming nothing.</div>", notes:"This is the default in most churches, including ours. It isn't rebellion; it's just never having asked."},
+ {kicker:"Posture three", h:"Cultivate", body:"<div class='body'>Receive it as a made thing. Enjoy what is good. Name what is bent. Set limits in love.<br><br>Slower. Harder. The only one you can hold for forty years.</div>", notes:"This is the posture the whole semester is training. Say it plainly so people know where you are going."},
+ {kicker:"Case study", h:"Delete the library?", body:"<div class='body'>Marcus, 24, eight months in Christ.<br>Two hundred games. Three real friendships. One blunt piece of advice from an older believer.<br><br>What does your group tell him?</div>", notes:"Read the full case aloud. Twelve minutes. If they rush to a verdict, ask: what would you need to know about Marcus that you don't know?"},
+ {kicker:"Before we meet again", h:"Count the hours", body:"<div class='body'>Two weeks. Your real number, from the counter — not your memory.<br><br>This is data, not judgment. Bring it back.</div>", notes:"Show them where to find it. Promise them nobody has to say their number out loud — only whether it surprised them. Preview Session 2 and close in prayer."}
+]
+},
+
+{
+n:2, unit:"Unit One · Foundations", title:"Made to Make, Made to Play",
+subtitle:"Why creativity and play are gifts of creation, not concessions to weakness",
+bigIdea:"Play is not the opposite of holiness and craft is not the opposite of calling. Both are rooted in the character of the God who made a world he called good.",
+icebreaker:{
+  title:"Three-minute game jam",
+  how:"In pairs, invent a game using only objects in the room. It needs one goal and one rule. Three minutes to build, thirty seconds to pitch. Vote on the most playable.",
+  why:"Everyone experiences design from the inside for three minutes. It makes the later claim — that games are made things by made makers — concrete instead of theoretical."
+},
+anchor:{ref:"Genesis 1:27-28",
+  text:"God created man in his own image. In God's image he created him; male and female he created them. God blessed them. God said to them, “Be fruitful, multiply, fill the earth, and subdue it.”",
+  gist:"Image-bearing and world-shaping arrive in the same breath. Human beings are made by a Maker, in the likeness of a Maker, and immediately commissioned to make something of the world."},
+support:[
+ {ref:"Genesis 2:15", gist:"Adam is put in the garden to work it and keep it. Work precedes the fall. Cultivation is original, not punishment."},
+ {ref:"Exodus 35:30-35", gist:"Bezalel is filled with the Spirit of God for craftsmanship — design, engraving, weaving. The first person Scripture says is Spirit-filled is an artist. Skill is a spiritual gift, not a distraction from one."},
+ {ref:"Zechariah 8:5", gist:"“The streets of the city will be full of boys and girls playing in its streets.” The prophetic picture of a healed city includes play. Shalom has games in it."},
+ {ref:"Proverbs 8:30-31", gist:"Wisdom is pictured delighting and rejoicing before God at the creation of the world. Delight is not a lesser mode of existence."}
+],
+teaching:[
+ {h:"Makers make makers",body:[
+   "Genesis opens with God making, and the first thing said about humans is that they are like him and are to fill and shape the earth.",
+   "Every video game is an artifact of that commission: someone imagined a world with rules, and other people entered it. That is a small, real echo of Genesis 1.",
+   "This is why blanket contempt for games is theologically expensive. It has to explain away the human impulse to build worlds."]},
+ {h:"Skill is a gift of the Spirit",body:[
+   "Exodus 35 is the surprise text. The first named Spirit-filled person in the Bible is a craftsman, and the gifting is specifically for artistry and design.",
+   "That means the animator, the composer, the level designer, and the programmer are working in a category Scripture already blesses.",
+   "It also raises the stakes. A gift given by the Spirit can be misused, and Exodus 32 — the golden calf — is the same skill pointed the wrong way, in the same book."]},
+ {h:"Play belongs to shalom",body:[
+   "Zechariah's picture of a restored Jerusalem is not a city of constant labor. It is old people sitting in the streets and children playing in them.",
+   "Play is not what we do because we are too weak to work continuously. It is part of what a healed world looks like.",
+   "So the question is never “should I play at all?” It is “what kind of play, how much, and does it still look like Zechariah's streets?”"]}
+],
+plan:[
+ {clock:"0:00", mins:5, h:"Welcome and the three-minute game jam", script:"Run the jam immediately, before any teaching. Then ask one question: <b>“What did you have to decide in three minutes?”</b> Collect two or three answers — usually a goal, a rule, and a way to lose.", bullets:["Keep the pitch to thirty seconds each or you will lose four minutes."]},
+ {clock:"0:05", mins:3, h:"Anchor reading and prayer", script:"Read <b>Genesis 1:27-28</b>, then <b>Zechariah 8:5</b> right after it. Reading them together is the point of the session. Pray thanking God for making a world with delight in it.", bullets:["Ask the person you assigned last session to read."]},
+ {clock:"0:08", mins:10, h:"Teaching: makers, craft, and the goodness of play", script:"Move through the three points. Spend real time on <b>Bezalel</b> — most groups have never heard that the first Spirit-filled person named in Scripture is an artist. End on Zechariah's streets.", bullets:["If someone objects that this justifies anything, agree, and promise Sessions 4 through 7."]},
+ {clock:"0:18", mins:12, h:"Case study and discussion", script:"Use <b>“The Hobby Developer”</b> if your group has any creatives in it; use <b>“Beautiful and Bleak”</b> if it doesn't. Both are below. Do not attempt both.", bullets:["Push past “it depends” — ask what it depends on."]},
+ {clock:"0:30", mins:6, h:"Application", script:"Assign the craft-attention exercise. Then collect the hour counts from Session 1 — <b>only whether the number surprised them.</b> Do not let anyone confess a number.", bullets:["Note who was surprised; it will matter in Session 5."]},
+ {clock:"0:36", mins:4, h:"Close and preview", script:"Preview Session 3: if making is good, why does technology so often go wrong? Genesis 4 and 11. Close in prayer.", bullets:[]}
+],
+cases:[
+ {title:"The Hobby Developer", tagline:"Primary case · a real calling or a real distraction?",
+  story:"Priya is nineteen and spends most weekends building a small puzzle game with two people she met online. She is good at it. Her parents, who are devout, keep asking when she will do something “that actually helps people,” and have started suggesting she pursue nursing instead. She has begun to feel that the hours she loves most are the hours she should be repenting of. She asks your group, half-joking: is making a game a waste of a Christian life?",
+  questions:["What would Exodus 35 say to Priya, and what would it not say?",
+   "Her parents' question — does it actually help people? — is a good question badly aimed. How would you re-aim it?",
+   "What is the difference between a calling and a hobby, and does the difference matter as much as we assume?"],
+  leaderKey:"<b>Where this should land:</b> Bezalel's gifting was for a tabernacle, so someone may argue that craft is only sanctified in explicitly religious use. Push back gently — Genesis 1 commissions world-shaping before there is any temple. Also honor the parents: their concern about a nineteen-year-old's direction is not faithlessness."},
+ {title:"Beautiful and Bleak", tagline:"Alternate case · superb craft, hopeless message",
+  story:"A member of your group has been playing a critically acclaimed game with extraordinary art, a haunting score, and writing better than most novels he's read. It is also relentlessly nihilistic — its whole argument is that nothing anyone does will matter. He finds it genuinely beautiful and he finds himself heavier every time he plays. He wants to know whether he is allowed to admire something whose message he rejects.",
+  questions:["Can you receive the craft of a made thing while refusing its claim about the world? Where else in life do we already do this?",
+   "He says he feels heavier afterward. How much weight should that feeling carry in his decision?",
+   "What would it look like to play this game with a Christian answer already in hand rather than borrowing the game's answer?"],
+  leaderKey:"<b>Where this should land:</b> hold two things at once — Philippians 4:8 is not a filter that deletes all sorrowful art (Ecclesiastes and Lamentations are in the canon), but a persistent internal heaviness is real evidence about this person, not just about the game. Session 7 gives them a tool for this; you can foreshadow it."}
+],
+discussion:[
+ "When you were a child, was play something you were praised for or something you were interrupted for? How does that still shape you?",
+ "Zechariah pictures a healed city with children playing in the streets. What kind of play would fit that picture, and what kind wouldn't?",
+ "Name one game whose craft you genuinely admire. What did the makers get right?",
+ "If skill really is a gift of the Spirit, what does that mean for how we talk about people who make games for a living?",
+ "Is there a difference between resting and playing? Which one do you actually get?"
+],
+takehome:{
+ challenge:"Play one session this week paying attention to craft rather than outcome. Write down three deliberate decisions the designers made — a sound, a pacing choice, a rule, a color. Bring one to the next meeting.",
+ practice:"Thank God once, out loud, for something a human being made this week. Anything. Notice how strange that feels.",
+ prep:"Read Genesis 4:20-22 and Genesis 11:1-9. Both are about technology. Neither is simple."
+},
+slides:[
+ {kicker:"Session 2 of 10 · Foundations", h:"Made to Make, Made to Play", body:"<div class='body'>Before we critique games, we have to say why play is good at all.</div>", notes:"Run the three-minute game jam before this slide, not after. The slide lands better once they have designed something."},
+ {kicker:"Anchor · Genesis 1:27-28", h:"", body:"<blockquote>God created man in his own image. In God's image he created him… Be fruitful, multiply, fill the earth, and subdue it.</blockquote><div class='attrib'>Genesis 1:27-28, WEB</div>", notes:"Image-bearing and world-shaping arrive in the same breath. The commission is not added later as a job; it's part of the description."},
+ {kicker:"Point one", h:"Makers make makers", body:"<div class='body'>Someone imagined a world with rules.<br>Other people entered it.<br><br>That is a small, real echo of Genesis 1.</div>", notes:"Blanket contempt for games has to explain away the human impulse to build worlds, and it can't."},
+ {kicker:"Point two · Exodus 35:30-35", h:"The first Spirit-filled man in the Bible is an artist", body:"<div class='body'>Bezalel — design, engraving, weaving, metalwork.<br>Filled with the Spirit of God, for craft.<br><br>Skill is a gift, not a distraction from one.</div>", notes:"Most groups have never noticed this. Let the surprise do the work. Then note Exodus 32: the same skill, pointed at a calf."},
+ {kicker:"Point three · Zechariah 8:5", h:"Shalom has games in it", body:"<blockquote>The streets of the city will be full of boys and girls playing in its streets.</blockquote><div class='attrib'>Zechariah 8:5, WEB</div>", notes:"The prophetic picture of a healed city is not endless labor. Play is part of what repair looks like. So the question was never whether to play."},
+ {kicker:"Which means", h:"The real questions", body:"<div class='body'>What kind of play?<br>How much?<br>Does it still look like Zechariah's streets?</div>", notes:"This is the hinge from Unit One to Unit Two. Say that the next three sessions are about formation."},
+ {kicker:"Case study", h:"Is making a game a waste of a Christian life?", body:"<div class='body'>Priya, 19. Weekends spent building a puzzle game.<br>Devout parents asking when she'll do something that helps people.<br><br>What does Exodus 35 say to her — and what doesn't it say?</div>", notes:"Twelve minutes. If your group has no creatives, swap in the alternate case, 'Beautiful and Bleak.'"},
+ {kicker:"Before we meet again", h:"Notice the craft", body:"<div class='body'>Play one session watching for design decisions, not outcomes.<br>Write down three. Bring one back.</div>", notes:"Also collect the hour counts from last session — surprised or not surprised, no numbers said aloud. Preview Session 3 and pray."}
+]
+},
+
+{
+n:3, unit:"Unit One · Foundations", title:"From the Garden to the Console",
+subtitle:"Technology in the Bible's story: gift, ambition, and the tool that shapes the hand",
+bigIdea:"Scripture never treats technology as morally empty. It is a genuine gift, it magnifies whatever is already in the human heart, and it quietly re-forms the people who use it.",
+icebreaker:{
+  title:"Before nine o'clock",
+  how:"Everyone lists every piece of technology they used before 9am today — count the alarm, the kettle, the car, the card reader, the earbuds. Compare totals. Then ask who chose any of it deliberately.",
+  why:"It breaks the assumption that technology means screens, and it demonstrates in ninety seconds that most of our tech use is inherited rather than chosen."
+},
+anchor:{ref:"Genesis 11:4",
+  text:"They said, “Come, let's build ourselves a city, and a tower whose top reaches to the sky, and let's make ourselves a name, lest we be scattered abroad on the surface of the whole earth.”",
+  gist:"Babel is not condemned for engineering. Brick and mortar are fine. The problem is the sentence in the middle — let us make ourselves a name — and the fear at the end. Technology carried the ambition; it did not create it."},
+support:[
+ {ref:"Genesis 4:20-22", gist:"Herding, music, and metalwork all begin in the line of Cain — the murderer's family. Scripture credits real culture-making to people outside the covenant without either condemning the culture or endorsing the line. Good gifts, fallen hands."},
+ {ref:"Isaiah 28:23-29", gist:"The farmer's skill in plowing and threshing is said to come from God, who instructs him. Ordinary technical competence is divine instruction."},
+ {ref:"Psalm 115:4-8", gist:"Idols have mouths and eyes that do nothing — “those who make them will be like them.” The deepest biblical claim about technology: we come to resemble what we make and trust."},
+ {ref:"Deuteronomy 8:17-18", gist:"“My power and the strength of my hand has gotten me this wealth.” The Babel temptation in domestic form — capability quietly convincing us we are self-made."}
+],
+teaching:[
+ {h:"Technology is a gift, and it arrives early",body:[
+   "Genesis 4 gives credit for tents, harps, and bronze to Cain's descendants — and simply reports it. No curse is attached to the crafts themselves.",
+   "Isaiah 28 goes further and says the farmer's technique is taught to him by God. Skill is not a rival to revelation.",
+   "So the first move is not suspicion. If your theology of technology starts at fear, it is not starting where the Bible starts."]},
+ {h:"Technology magnifies the heart",body:[
+   "Babel's builders were not punished for masonry. They were scattered for the ambition the masonry made possible: a name for ourselves, and a defense against being scattered.",
+   "The tower did not invent the desire. It gave the desire reach. That is what all technology does — it lowers the cost of doing what you already wanted.",
+   "Apply it directly: a matchmaking system does not create the desire to prove you are better than other people. It gives that desire an opponent every ninety seconds."]},
+ {h:"We become like what we make",body:[
+   "Psalm 115 is describing idols, but the principle is broader: what you handle constantly, you begin to resemble.",
+   "The tool shapes the hand. A game that rewards instant reaction trains you toward instant reaction — in the game, and then a little bit outside it.",
+   "This is not a reason to panic. It is a reason to pay attention, which is exactly what Session 4 will do."]}
+],
+plan:[
+ {clock:"0:00", mins:5, h:"Welcome and “before nine o'clock”", script:"Run the list. Get a couple of totals out loud — they are usually between fifteen and forty. Then land the question: <b>“How many of those did you choose?”</b>", bullets:["Someone will say the alarm chose them. Keep that line; you can use it later."]},
+ {clock:"0:05", mins:3, h:"Anchor reading and prayer", script:"Read <b>Genesis 11:1-9</b> in full — it's short. Ask: what exactly does God object to here? Let one or two answers stand without correction.", bullets:[]},
+ {clock:"0:08", mins:10, h:"Teaching: gift, amplifier, and mirror", script:"Three points, roughly three minutes each. The line to protect is: <b>“The tower did not invent the desire. It gave the desire reach.”</b> Then take it straight into matchmaking, notifications, and infinite content.", bullets:["Genesis 4:20-22 usually surprises people. Read it aloud rather than summarizing it."]},
+ {clock:"0:18", mins:12, h:"Case study and discussion", script:"Use <b>“The Ministry Server”</b>. It is deliberately a story about doing something good with technology, so the group has to think rather than just warn.", bullets:["If they only list dangers, ask them to name what would be genuinely gained."]},
+ {clock:"0:30", mins:6, h:"Application", script:"Ask each person to name one habit a piece of technology changed without their permission. Go around; short answers. This is the bridge into Unit Two.", bullets:["Have one ready about yourself. Model the honesty first."]},
+ {clock:"0:36", mins:4, h:"Close and preview", script:"Preview Unit Two: <b>“What Am I Becoming?”</b> — from what technology <i>is</i> to what it is doing to us. Close in prayer.", bullets:[]}
+],
+cases:[
+ {title:"The Ministry Server", tagline:"Primary case · good intentions, real design decisions",
+  story:"Your church's youth pastor wants to run a Minecraft server for the students, open to their school friends. The elders like the outreach idea. The pastor is proposing it be always-on, unmoderated between 10pm and 7am because nobody is awake to watch it, with an invite link the students can share freely. Three families are enthusiastic. One father, who works in IT, says he'll resign from the youth committee if it goes ahead as described.",
+  questions:["What is genuinely good about this proposal? Name it before you name a risk.",
+   "The father's objection is about design, not about Minecraft. What specific design decisions would you change?",
+   "Babel's problem was the ambition behind the building. What ambition might be hiding behind a church wanting a popular server?"],
+  leaderKey:"<b>Where this should land:</b> the group should end with a modified proposal, not a verdict. Concrete fixes: moderated hours, adult presence, invite approval, a written conduct standard, and a stated purpose. The deeper question — is this outreach or is this a numbers strategy — is the Babel question and worth naming gently."},
+ {title:"The Alarm That Chose Me", tagline:"Alternate case · a small, unglamorous story",
+  story:"A woman in your group realizes she has not woken up naturally in eleven years, has not navigated to anywhere new without turning-by-turn directions since 2016, and cannot remember a single phone number besides her mother's. None of this is sin. She is unsettled anyway and cannot articulate why.",
+  questions:["Is she right to be unsettled, or is this just nostalgia?","Psalm 115:8 says we become like what we make. What has she become like?","Which of these three would you actually want to reverse, and why that one?"],
+  leaderKey:"<b>Where this should land:</b> the point is capability transfer — we hand off skills to tools and then discover the skill is gone. Some of that is fine and always has been. The discernment question is which capacities are worth keeping in the body, and the answer usually involves attention, memory, and patience."}
+],
+discussion:[
+ "Genesis 4 credits music and metalwork to Cain's family. Why do you think Scripture reports that so calmly?",
+ "Name a technology you'd defend as an unambiguous gift. Now name what it cost.",
+ "“The tower didn't invent the desire; it gave the desire reach.” What desire of yours has a game given reach to?",
+ "Psalm 115 says we become like what we make. Finish this sentence honestly: “The device I touch most has made me more ______.”",
+ "Is there any technology you have deliberately refused? What did that cost you socially?"
+],
+takehome:{
+ challenge:"Name one habit that a piece of technology changed in you without you ever deciding to change it. Write it in one sentence and bring it back.",
+ practice:"Pick one day this week to do one ordinary task the slow way — a paper map, a handwritten note, a meal without a screen. Notice what you feel in the first five minutes.",
+ prep:"Read Romans 12:1-2 and Hebrews 5:14 before Session 4."
+},
+slides:[
+ {kicker:"Session 3 of 10 · Foundations", h:"From the Garden to the Console", body:"<div class='body'>Technology in the Bible's story: gift, ambition, and the tool that shapes the hand.</div>", notes:"Run 'Before nine o'clock' first. Land the question: how many of those did you choose?"},
+ {kicker:"Point one · Genesis 4:20-22", h:"The gift arrives early", body:"<div class='body'>Tents. Harps. Bronze and iron.<br>All credited to Cain's line — and simply reported.<br><br>No curse on the crafts themselves.</div>", notes:"Read the verses aloud rather than summarizing. Then Isaiah 28: the farmer's skill is taught by God. If your theology of tech starts at fear, it isn't starting where the Bible starts."},
+ {kicker:"Anchor · Genesis 11:4", h:"", body:"<blockquote>Come, let's build ourselves a city, and a tower whose top reaches to the sky, and let's make ourselves a name…</blockquote><div class='attrib'>Genesis 11:4, WEB</div>", notes:"Ask what God actually objects to. It isn't brick. It's the sentence in the middle and the fear at the end."},
+ {kicker:"Point two", h:"The tower didn't invent the desire. It gave the desire reach.", body:"<div class='body'>Technology lowers the cost of doing what you already wanted.</div>", notes:"This is the line of the night. Then apply it: matchmaking doesn't create the desire to be better than other people. It supplies an opponent every ninety seconds."},
+ {kicker:"Point three · Psalm 115:8", h:"We become like what we make", body:"<blockquote>Those who make them will be like them; yes, everyone who trusts in them.</blockquote><div class='attrib'>Psalm 115:8, WEB</div>", notes:"Written about idols, but the principle is wider. A game that rewards instant reaction trains you toward instant reaction — inside it, and a little outside it too."},
+ {kicker:"Case study", h:"The ministry server", body:"<div class='body'>Always on. Unmoderated overnight. Open invite links.<br>Three families are thrilled. One father will resign.<br><br>Name what's good before you name a risk.</div>", notes:"Twelve minutes. Aim for a modified proposal, not a verdict. Then ask the Babel question: what ambition might be hiding behind wanting a popular server?"},
+ {kicker:"Before we meet again", h:"One habit you didn't choose", body:"<div class='body'>Name a habit technology changed in you without your permission.<br>One sentence. Bring it back.</div>", notes:"Go around the room now with short answers — this is the bridge into Unit Two. Have one about yourself ready first."},
+ {kicker:"Next time · Unit Two", h:"What am I becoming?", body:"<div class='body'>From what technology is<br>to what it is doing to us.</div>", notes:"Close in prayer. Ask them to read Romans 12:1-2 and Hebrews 5:14."}
+]
+},
+
+{
+n:4, unit:"Unit Two · Formation", title:"What Am I Becoming?",
+subtitle:"Habits, repetition, and the quiet training that happens while you're having fun",
+bigIdea:"You are not primarily formed by what you believe. You are formed by what you repeat. Games are repetition machines, which makes them formation machines.",
+icebreaker:{
+  title:"Muscle memory",
+  how:"Ask everyone to mime something their hands do without conscious thought — a controller combo, a keyboard shortcut, a guitar chord, tying a tie, a phone unlock pattern. Then ask how long it took to become automatic and whether they remember deciding to learn it.",
+  why:"It puts the session's whole thesis in the body before it is in the mind: repetition installs capacities you never consciously chose."
+},
+anchor:{ref:"Romans 12:1-2",
+  text:"Therefore I urge you, brothers, by the mercies of God, to present your bodies a living sacrifice, holy, acceptable to God, which is your spiritual service. Don't be conformed to this world, but be transformed by the renewing of your mind, so that you may prove what is the good, well-pleasing, and perfect will of God.",
+  gist:"Paul assumes a person is always being pressed into a shape by something. Conformed is passive and automatic; transformed is active and requires renewal. There is no third, neutral option."},
+support:[
+ {ref:"Hebrews 5:14", gist:"Solid food belongs to the mature, whose senses are “exercised to discern good and evil.” Discernment is a trained faculty, like a muscle — not a personality trait some people are born with."},
+ {ref:"1 Timothy 4:7-8", gist:"“Exercise yourself toward godliness.” The verb is athletic. Godliness is a training outcome, and training is repetition."},
+ {ref:"Luke 6:40", gist:"Everyone fully trained will be like his teacher. Whatever you sit under long enough, you resemble."},
+ {ref:"Proverbs 4:23", gist:"Guard your heart, because your life flows from it. Guarding presumes ongoing traffic in and out — a checkpoint, not a wall."}
+],
+teaching:[
+ {h:"Formation is repetition, not information",body:[
+   "Most of us assume we are what we believe. Paul assumes we are what we are pressed into — hence conformed, a passive verb happening to you while you do nothing.",
+   "This is why knowing the right answer about gaming has never once changed anyone's gaming. Information does not undo repetition.",
+   "The person who plays four hours a night has done roughly a thousand hours a year of something. Whatever that something trains, they are getting very good at."]},
+ {h:"Every game trains something",body:[
+   "This is not an accusation; it's a description. Team shooters train communication under pressure and also train contempt for underperformers. Strategy games train patience and long planning. Match-three games train the compulsion to clear the notification.",
+   "Some of what games train is genuinely virtuous — persistence through failure is a real Christian competence and games teach it better than most sermons.",
+   "The exercise is not to sort games into clean and dirty. It's to finish the sentence: <i>this game trains me to ______</i>."]},
+ {h:"Discernment is trained, not issued",body:[
+   "Hebrews 5:14 says mature believers have senses exercised by constant practice. Nobody receives discernment as a download.",
+   "Which means the goal of this series is not to give you the right list. It's to build the faculty that generates the list.",
+   "Practical form: a five-second question after playing — <i>what did that make me want?</i> Asked a hundred times, it becomes the exercised sense Hebrews describes."]}
+],
+plan:[
+ {clock:"0:00", mins:5, h:"Welcome and “muscle memory”", script:"Run the mime. Then the two follow-ups: <b>how long did it take to become automatic, and do you remember deciding to learn it?</b> Almost nobody does. That's the session.", bullets:["Collect one habit that took years and one that took days."]},
+ {clock:"0:05", mins:3, h:"Anchor reading and prayer", script:"Read <b>Romans 12:1-2</b>. Point out the two verbs — conformed and transformed — and that only one of them requires you to do anything. Pray for honest sight.", bullets:[]},
+ {clock:"0:08", mins:10, h:"Teaching: repetition, training, discernment", script:"Point one is the thesis. Point two is where the room engages — invite them to name what specific games train, out loud, mid-teaching. <b>Take the virtuous examples seriously</b> or you will lose the gamers.", bullets:["Have two examples ready where a game trained something good."]},
+ {clock:"0:18", mins:12, h:"Case study and discussion", script:"Read <b>“Ella's Short Fuse.”</b> The trap the group will fall into is blaming the game or exonerating it. The better answer is more precise than either.", bullets:["Ask: what would you need to know to tell the difference?"]},
+ {clock:"0:30", mins:6, h:"Application: finish the sentence", script:"Everyone writes one line: <b>“This game trains me to ______.”</b> About a game they actually play. Two or three read theirs aloud if willing.", bullets:["Write yours first and read it first."]},
+ {clock:"0:36", mins:4, h:"Close and preview", script:"Preview Session 5: time, rest, and whether gaming is Sabbath or avoidance. Ask them to bring the hour count from Session 1 to mind. Close in prayer.", bullets:[]}
+],
+cases:[
+ {title:"Ella's Short Fuse", tagline:"Primary case · is the game to blame?",
+  story:"Ella is seventeen and plays a competitive team game most evenings. Her mother has noticed that during ranked season Ella is snappish with her younger brothers, quick to assign blame, and impatient with anyone who is slow. Out of season she is her old self. Ella says the game is her stress relief and that if her mother is worried about her temper she should look at the pressure of exams. Both of them are partly right.",
+  questions:["What is the evidence that the game is forming her, and what is the evidence that something else is?",
+   "Ella calls it stress relief. What would tell you whether it is relieving stress or relocating it?",
+   "If you were her mother, what one change would you ask for — and how would you ask so that she could actually hear it?"],
+  leaderKey:"<b>Where this should land:</b> resist both simplifications. The seasonal correlation is real evidence, but so is exam pressure. The useful move is to look for a mechanism — what does ranked specifically ask her to practice? Blame allocation, tolerance thresholds, and hostility toward incompetence are trainable, and she is practicing them nightly. Notice she is right that the game relieves stress; the question is what it charges for the relief."},
+ {title:"The Good Training", tagline:"Alternate case · when the game is the discipler",
+  story:"A man in your group spent two years stuck in a hard game that killed him hundreds of times. He says, without irony, that it taught him more about persevering through failure than anything at church did. He is not being provocative. He genuinely learned not to quit, and it has carried into his job.",
+  questions:["Is he right? Can a game form a genuinely Christian virtue?",
+   "If yes, what does that say about our teaching methods — and what does it say about the limits of what games can form?",
+   "Is a virtue learned in a low-stakes environment a real virtue, or a rehearsal of one?"],
+  leaderKey:"<b>Where this should land:</b> take the claim seriously — persistence through failure is genuinely trainable and games do train it. Then press the limit: games train persistence toward a goal you chose, that is guaranteed achievable, that you can quit at no cost. Christian perseverance is often toward a goal you didn't choose, with no guarantee, that you can't quit. Real training, incomplete transfer."}
+],
+discussion:[
+ "Finish it out loud: “The game I play most trains me to ______.” Nobody argues with anyone else's sentence tonight.",
+ "Name something genuinely good a game has trained in you. Be specific — not “teamwork,” but the actual moment.",
+ "Romans 12 says conforming happens to you passively. Where are you currently being conformed and not noticing?",
+ "Hebrews 5 says discernment is exercised by constant practice. When did you last practice it about your own entertainment?",
+ "If someone watched you for a month and described the person your habits are producing, what would they say?"
+],
+takehome:{
+ challenge:"Every time you finish playing this week, ask one five-second question: “What did that make me want?” Don't judge the answer. Just collect it.",
+ practice:"Pick one small, deliberate repetition to add — five minutes of Scripture before you start playing, not after. Watch whether the order changes anything.",
+ prep:"Read Exodus 20:8-11 and Mark 6:31 before Session 5. Have your hour count from Session 1 to hand."
+},
+slides:[
+ {kicker:"Session 4 of 10 · Formation", h:"What Am I Becoming?", body:"<div class='body'>You are not primarily formed by what you believe.<br>You are formed by what you repeat.</div>", notes:"Run 'Muscle memory' first — the mime, then the two questions. Almost nobody remembers deciding to learn the thing their hands can do."},
+ {kicker:"Anchor · Romans 12:2", h:"", body:"<blockquote>Don't be conformed to this world, but be transformed by the renewing of your mind…</blockquote><div class='attrib'>Romans 12:2, WEB</div>", notes:"Two verbs. Conformed is passive — it happens while you do nothing. Transformed requires renewal. There is no neutral third option."},
+ {kicker:"Point one", h:"Information doesn't undo repetition", body:"<div class='body'>Knowing the right answer about gaming has never once changed anyone's gaming.<br><br>Four hours a night is a thousand hours a year of something.</div>", notes:"Say this without accusation. Every person in the room has already tried to fix a habit with information and failed."},
+ {kicker:"Point two", h:"Every game trains something", body:"<div class='body'>Communication under pressure — and contempt for underperformers.<br>Patience and long planning.<br>The compulsion to clear the notification.<br>Persistence through failure.</div>", notes:"Invite the room to add to this list out loud. Take the virtuous ones seriously or you will lose the gamers in the room for the rest of the semester."},
+ {kicker:"Point three · Hebrews 5:14", h:"Discernment is exercised, not issued", body:"<div class='body'>Senses trained by constant practice.<br><br>The goal isn't to give you the right list.<br>It's to build the faculty that makes the list.</div>", notes:"Introduce the five-second question here: after playing, ask 'what did that make me want?' A hundred repetitions of that is the exercised sense Hebrews describes."},
+ {kicker:"Case study", h:"Ella's short fuse", body:"<div class='body'>Snappish during ranked season. Herself out of season.<br>She says it's stress relief. Her mother says it's the game.<br><br>Both of them are partly right.</div>", notes:"Twelve minutes. Don't let them blame or exonerate the game. Ask what mechanism would explain the pattern."},
+ {kicker:"Write it down", h:"“This game trains me to ______.”", body:"<div class='body'>One sentence. A game you actually play.<br>Nobody argues with anyone else's sentence tonight.</div>", notes:"Write yours first and read yours first. This is the most useful sixty seconds of the session."},
+ {kicker:"Before we meet again", h:"What did that make me want?", body:"<div class='body'>Five seconds, every time you finish playing.<br>Don't judge the answer. Just collect it.</div>", notes:"Preview Session 5 — time, rest, and whether gaming is Sabbath or avoidance. Ask them to have their hour count in mind. Close in prayer."}
+]
+},
+{
+n:5, unit:"Unit Two · Formation", title:"Time, Rest, and the Sabbath Question",
+subtitle:"Telling the difference between rest that restores you and escape that postpones you",
+bigIdea:"God commands rest, so leisure is not a moral failure. But rest returns you to your life, and escape returns you to your life later and worse. The hours will tell you which one you are getting.",
+icebreaker:{
+  title:"Guess, then check",
+  how:"Everyone writes down their guess for their own weekly screen or gaming hours. Then they open the actual counter on their device. Nobody says a number aloud — only the size of the gap, and whether it was higher or lower.",
+  why:"The gap is the lesson, not the number. It exposes how unreliable our internal accounting is without shaming anyone, and it makes Psalm 90:12 land as a practical request rather than poetry."
+},
+anchor:{ref:"Ephesians 5:15-17",
+  text:"Therefore watch carefully how you walk, not as unwise, but as wise, redeeming the time, because the days are evil. Therefore don't be foolish, but understand what the will of the Lord is.",
+  gist:"Redeeming the time is a commercial image — buying back. Paul assumes time is being spent whether or not we are watching, and that wisdom is the difference between spending and being spent."},
+support:[
+ {ref:"Exodus 20:8-11", gist:"Rest is legislated, not merely permitted, and grounded in God's own rest. A theology that treats leisure as sin is not more holy than the fourth commandment."},
+ {ref:"Mark 6:31", gist:"Jesus tells the exhausted disciples to come away and rest. Rest is prescribed by Christ to people doing good work."},
+ {ref:"Psalm 90:12", gist:"“Teach us to count our days, that we may gain a heart of wisdom.” Counting comes first; wisdom is what counting produces."},
+ {ref:"Matthew 11:28-30", gist:"The rest Jesus offers is a yoke, not a vacuum. Real rest has a shape and a direction, not just an absence of demand."}
+],
+teaching:[
+ {h:"Rest is commanded, and that settles something",body:[
+   "Before any critique, get this straight: the fourth commandment makes rest an obligation. Someone who never plays, never stops, never wastes an afternoon is not thereby more spiritual.",
+   "Jesus prescribes rest to the disciples in the middle of fruitful ministry. Tiredness is not a virtue and busyness is not obedience.",
+   "So this session is not going to end with everyone playing less. Some people in this room should probably play more, and stop apologizing for it."]},
+ {h:"Rest restores; escape postpones",body:[
+   "The test is not the activity but the exit. After genuine rest you return to your responsibilities with more of yourself available. After escape you return with less, later, and with something added — usually guilt or fog.",
+   "Four questions that tell them apart: Did I choose the start, or did it just begin? Did I choose the end, or did it end me? Do I feel returned or emptied? Would I be glad if someone walked in?",
+   "Note that escape is not always sin. It is often a symptom. The person escaping nightly is usually escaping something specific, and the loving question is what."]},
+ {h:"Count first, then re-order",body:[
+   "Psalm 90 asks God to teach us to count. Not to condemn us, not to inspire us — to count. Honest accounting precedes wise living.",
+   "Most of us have never actually counted, and the guess-versus-check exercise usually proves it.",
+   "Then the re-ordering, and it should be small: one boundary, not a new life. A stop time. One game-free day. One evening that belongs to someone else before it belongs to a console."]}
+],
+plan:[
+ {clock:"0:00", mins:5, h:"Welcome and “guess, then check”", script:"Run it exactly as written. <b>Protect the room: no numbers said aloud.</b> Collect gaps only — “I was off by six hours,” “I was closer than I expected.”", bullets:["If someone volunteers a number, don't stop them, but don't invite the next person to match it."]},
+ {clock:"0:05", mins:3, h:"Anchor reading and prayer", script:"Read <b>Ephesians 5:15-17</b>, then <b>Exodus 20:8-11</b>. Read them in that order so the command to rest lands after the warning about time. Pray Psalm 90:12 as the prayer.", bullets:[]},
+ {clock:"0:08", mins:10, h:"Teaching: rest is commanded, escape is a counterfeit", script:"Lead with the permission — <b>some people here should play more</b> — or the rest of the session will sound like an attack. Then the four diagnostic questions. Then Psalm 90.", bullets:["Put the four questions where everyone can see them; they are the takeaway tool.","Say plainly that escape is often a symptom, not a sin."]},
+ {clock:"0:18", mins:12, h:"Case study and discussion", script:"Read <b>“Third Shift.”</b> The group will want to tell Daniel to stop. Ask them first what he would lose if he did, and whether anything else in his life is currently his.", bullets:["Watch for anyone in the room who visibly recognizes themselves. Follow up privately after."]},
+ {clock:"0:30", mins:6, h:"Application: one boundary", script:"Each person sets <b>one</b> boundary for the next two weeks — a stop time, a game-free day, or a “not until X is done.” Written down, specific, small. Pair them up to report back.", bullets:["Reject anything vague like “play less.” Ask for a time or a day."]},
+ {clock:"0:36", mins:4, h:"Close and preview", script:"Preview Session 6: why the games are built the way they are — variable rewards, streaks, loot boxes, and money. Close by praying the Matthew 11:28-30 invitation over the group.", bullets:[]}
+],
+cases:[
+ {title:"Third Shift", tagline:"Primary case · the only hours that are his",
+  story:"Daniel is thirty-eight, has three children under nine, and works a job he finds tolerable and dull. From eleven at night until around two in the morning he plays — alone, with headphones on, in the dark. He describes those three hours as the only part of the day that belongs to him, and he is not wrong: every other hour is claimed by someone. He is also chronically exhausted, short with his wife in the mornings, and has fallen asleep twice during his daughter's bedtime story. His wife has stopped mentioning it. He knows this is worse than her mentioning it.",
+  questions:["Apply the four questions to Daniel. Which one exposes the most?",
+   "He is right that no other hours are his. What would a genuine answer to that legitimate need look like?",
+   "If Daniel simply stopped tonight, what would fill those three hours — and is that better?"],
+  leaderKey:"<b>Where this should land:</b> the group's first answer will be “go to bed.” It's not wrong and it's not enough. Daniel's need for unclaimed time is real and biblical; the problem is he is buying it from tomorrow at a terrible exchange rate. Better outcomes: negotiate protected daytime hours with his wife, move the three hours to a time that costs less, and address the tolerable-and-dull job, which is doing more damage than the games. Note the detail that his wife has stopped mentioning it — that's the most serious sentence in the case."},
+ {title:"The Sabbath Console", tagline:"Alternate case · a genuinely good use of an afternoon",
+  story:"A woman in your group plays a slow farming game for about ninety minutes on Sunday afternoons. She describes it as the least anxious part of her week. Her husband thinks it's a strange way to keep the Sabbath and says she should be reading or resting properly. She says this is resting properly. They have asked the group to settle it.",
+  questions:["Does the fourth commandment have opinions about what rest looks like, or only that it happens?",
+   "Apply the four questions to her ninety minutes. How does she score?",
+   "Her husband's concern isn't nothing. What is he actually worried about?"],
+  leaderKey:"<b>Where this should land:</b> she almost certainly scores well on all four questions — chosen start, chosen end, returned rather than emptied, unembarrassed. Use this case as the counterweight to Daniel so the session doesn't collapse into “gaming bad.” The husband's real concern is probably that rest should be shared, which is a fair and separate point worth naming."}
+],
+discussion:[
+ "Was your guess higher or lower than your actual number? What does the direction of the error tell you?",
+ "Describe the last time you rested and came back with more of yourself, not less. What was it?",
+ "Which of the four questions — chosen start, chosen end, returned or emptied, glad if seen — is hardest for you?",
+ "Is there something you are currently escaping? You don't have to say what.",
+ "Who in your life currently gets your best hours, and did you decide that on purpose?"
+],
+takehome:{
+ challenge:"Set one boundary and keep it for two weeks: a stop time, one game-free day, or one thing that has to be done first. Tell your partner from tonight what it is.",
+ practice:"Once this week, stop playing five minutes before you want to. Notice what that costs and what it proves.",
+ prep:"Read 1 Corinthians 6:12 and Hebrews 13:5 before Session 6. Look up how much you have spent in games in the last three months — actually look."
+},
+slides:[
+ {kicker:"Session 5 of 10 · Formation", h:"Time, Rest, and the Sabbath Question", body:"<div class='body'>Rest returns you to your life.<br>Escape returns you to your life later, and with less.</div>", notes:"Run 'Guess, then check' first. Gaps only — no numbers said aloud. Protect the room."},
+ {kicker:"Say this first", h:"Rest is commanded", body:"<div class='body'>Exodus 20 legislates it.<br>Jesus prescribes it to working disciples in Mark 6.<br><br>Some people here should play <em>more</em>, and stop apologizing.</div>", notes:"Do not skip this. If the session opens as a critique, the heavy players stop listening and the anxious ones get more anxious."},
+ {kicker:"Anchor · Ephesians 5:15-16", h:"", body:"<blockquote>Watch carefully how you walk, not as unwise, but as wise, redeeming the time…</blockquote><div class='attrib'>Ephesians 5:15-16, WEB</div>", notes:"'Redeeming' is a commercial word — buying back. Paul assumes time is being spent whether or not you're watching."},
+ {kicker:"The tool", h:"Four questions", body:"<div class='body'><ul><li>Did I choose the start, or did it just begin?</li><li>Did I choose the end, or did it end me?</li><li>Do I feel returned, or emptied?</li><li>Would I be glad if someone walked in?</li></ul></div>", notes:"This is the takeaway of the session. Put it where they can copy it. Add: escape is often a symptom rather than a sin — the loving question is what someone is escaping."},
+ {kicker:"Psalm 90:12", h:"Count first", body:"<blockquote>So teach us to count our days, that we may gain a heart of wisdom.</blockquote><div class='attrib'>Psalm 90:12, WEB</div>", notes:"Not condemn us. Not inspire us. Count. Honest accounting comes before wise living, and most of us have never actually done it."},
+ {kicker:"Case study", h:"Third shift", body:"<div class='body'>11pm to 2am. Three children under nine. Headphones on, in the dark.<br>The only hours that belong to him.<br><br>His wife has stopped mentioning it.</div>", notes:"Twelve minutes. Their first answer will be 'go to bed.' Ask what he'd lose, and what would fill the hours. The line about his wife is the most serious one in the case."},
+ {kicker:"Before we meet again", h:"One boundary. Small and specific.", body:"<div class='body'>A stop time. A game-free day. A “not until ______ is done.”<br><br>Not “play less.” That isn't a boundary.</div>", notes:"Pair them up to report back. Reject anything vague."},
+ {kicker:"Next time", h:"Why is it built this way?", body:"<div class='body'>Variable rewards. Daily streaks. Limited-time events. Loot boxes.<br><br>Somebody designed all of that on purpose.</div>", notes:"Ask them to look up their actual three-month spend before next session. Close praying Matthew 11:28-30."}
+]
+},
+
+{
+n:6, unit:"Unit Two · Formation", title:"Desire by Design",
+subtitle:"Compulsion loops, loot boxes, and what it means not to be mastered by anything",
+bigIdea:"Modern games are not accidentally hard to stop. Systems are engineered to capture attention and money, and Paul's freedom test — I will not be brought under the power of anything — is aimed exactly here.",
+icebreaker:{
+  title:"Name that mechanic",
+  how:"Read out the plain-language definitions from the glossary in this session and let the group shout the industry term — battle pass, gacha, FOMO event, daily streak, pity timer, whale. Award nothing.",
+  why:"Half the room knows the vocabulary intimately and half has never heard it. Two minutes here means the rest of the session can be one conversation instead of two."
+},
+anchor:{ref:"1 Corinthians 6:12",
+  text:"“All things are lawful for me,” but not all things are expedient. “All things are lawful for me,” but I will not be brought under the power of anything.",
+  gist:"Paul adds a second test to the one from Session 1. The first was about the neighbor; this one is about mastery. He does not ask whether a thing is sinful. He asks who is in charge."},
+support:[
+ {ref:"Proverbs 23:4-5", gist:"Wealth sprouts wings and flies away. Written about riches; it describes a limited-time cosmetic exactly."},
+ {ref:"Luke 12:15", gist:"“A man's life doesn't consist of the abundance of the things which he possesses.” Applied to inventories as much as to barns."},
+ {ref:"Hebrews 13:5", gist:"Be content with what you have, because of a promise about God's presence — not because wanting things is naughty. Contentment is grounded in company, not in austerity."},
+ {ref:"Galatians 5:1", gist:"Christ set us free for freedom; don't be entangled again in a yoke of bondage. Freedom is the state to be defended, not a permission slip."},
+ {ref:"2 Peter 2:19", gist:"“By whom a man is overcome, by the same is he also brought into bondage.” The plainest statement of the mastery principle in Scripture."}
+],
+teaching:[
+ {h:"The loop is engineered",body:[
+   "Three mechanics do most of the work. Variable reward: you don't know when the good thing comes, which is far more compelling than knowing. Streaks and dailies: the cost of missing a day is made visible. Scarcity: the item leaves on Sunday.",
+   "None of these were invented by game designers. They were refined in slot machine design and imported. That's a historical fact, not an insult.",
+   "Knowing this does not make you immune. It does mean that when you can't stop, the honest explanation is usually not that you are uniquely weak."]},
+ {h:"Paul's second test: who is in charge",body:[
+   "In 1 Corinthians 6:12 Paul doesn't argue that anything is forbidden. He says he refuses to be brought under the power of anything, and that refusal is the whole ethic.",
+   "So the diagnostic question is not “is this game sinful?” but “could I stop this for thirty days if I decided to, and how do I know?”",
+   "The honest test is to actually try it, because everyone believes they could stop until they attempt it."]},
+ {h:"Money is a discipleship question",body:[
+   "Free-to-play means someone else is paying, and the design is tuned to find the people who will pay a lot. In the industry those people have a name.",
+   "Loot boxes and gacha pulls are randomized purchases. Whether that is gambling is genuinely debated; several countries have regulated them and Belgium restricted them. Christians can disagree about the category and still ask the stewardship question.",
+   "Practical form: a number. Not zero necessarily — a number you decided in advance, in daylight, when you were not two pulls from the thing you wanted."]}
+],
+plan:[
+ {clock:"0:00", mins:5, h:"Welcome and “name that mechanic”", script:"Run the glossary game fast. Then one question: <b>“Who decided these existed?”</b> The answer — people, on purpose, for money — is the session's premise.", bullets:["Don't moralize during the game. Let it be fun."]},
+ {clock:"0:05", mins:3, h:"Anchor reading and prayer", script:"Read <b>1 Corinthians 6:12</b>, and note that it's the same slogan Paul quoted in Session 1 with a different second half. Pray for freedom rather than for rules.", bullets:[]},
+ {clock:"0:08", mins:10, h:"Teaching: the loop, the mastery test, the money", script:"Explain the three mechanics plainly and without outrage — <b>describing the machine is more persuasive than denouncing it.</b> Then Paul's question: who is in charge? Then the money.", bullets:["Name the slot-machine lineage; it lands.","Say clearly that Christians disagree on whether loot boxes are gambling."]},
+ {clock:"0:18", mins:12, h:"Case study and discussion", script:"Read <b>“Four Hundred Dollars.”</b> Deliberately messy — it has a stewardship question, an honesty question, a parenting question, and a grace question tangled together. Make them separate the threads.", bullets:["Ask which thread they'd address first if they only had one conversation."]},
+ {clock:"0:30", mins:6, h:"Application: a number and a fast", script:"Two assignments. <b>One:</b> decide a monthly in-game spending number in advance and write it down. <b>Two:</b> pick one game and don't open it for seven days — and pay attention to what day three feels like.", bullets:["The seven-day fast is the most revealing exercise in the whole semester. Sell it properly."]},
+ {clock:"0:36", mins:4, h:"Close and preview", script:"Preview Session 7 — violence, story, and what we set before our eyes. Close in prayer for the person in the room who is going to find day three hard.", bullets:[]}
+],
+cases:[
+ {title:"Four Hundred Dollars", tagline:"Primary case · four tangled questions in one story",
+  story:"Josh is sixteen. Over five weeks he spent four hundred and twelve dollars on a mobile game, chasing a limited character, using money from a summer job his parents had encouraged him to take. He hid the transactions by turning off email receipts. When his mother found out, she cried, and his father said the money was his to lose and that the crying was manipulative. Josh says he knows it was stupid, that he'd do it again if the same character came back, and that he doesn't understand why everyone is treating it like a moral failure rather than a bad purchase.",
+  questions:["Separate the threads: the money, the concealment, the compulsion, and the parents' disagreement. Which is most urgent?",
+   "Josh says he'd do it again. What does that admission tell you that the four hundred dollars doesn't?",
+   "How would you talk to Josh so that he ends the conversation less likely to hide the next one?"],
+  leaderKey:"<b>Where this should land:</b> the concealment matters more than the amount, and the “I'd do it again” matters more than both — that's the mastery question in Josh's own words. Guard against a group pile-on; his father's point that it was his money to lose is a real principle, badly timed. The best outcome is a plan Josh helps write: a pre-decided number, receipts back on, and one adult he tells before he spends."},
+ {title:"The Streak", tagline:"Alternate case · nothing was spent and something was lost",
+  story:"A woman in your group has logged into the same game every single day for two years and four months. She spends about eight minutes a day doing the dailies. She has spent no money. She checked in from a hospital waiting room the night her father was admitted, and from the car park at a funeral. She says it's eight minutes and she doesn't see the problem. She brought it up herself.",
+  questions:["Is there a problem? Say why or why not before anyone else speaks.",
+   "She brought it up herself. What does that suggest?",
+   "Apply Paul's question directly: is she in charge of the streak, or is the streak in charge of her — and what test would settle it?"],
+  leaderKey:"<b>Where this should land:</b> the total cost is trivial and the mastery evidence is severe. This is the cleanest illustration of 1 Corinthians 6:12 in the whole curriculum — nothing here is sinful, and something here is clearly in charge. The obvious test is to break it deliberately, and the group should notice how strong her resistance to that suggestion is."}
+],
+discussion:[
+ "Which mechanic in the glossary has actually worked on you? Not in theory — which one.",
+ "Could you stop your main game for thirty days? How confident are you, and what is that confidence based on?",
+ "Have you ever bought something in a game you regretted within an hour? What made you buy it?",
+ "Is a randomized purchase gambling? Argue the side you don't hold.",
+ "Hebrews 13:5 grounds contentment in God's presence, not in having less. Does that change anything about how you'd fight this?"
+],
+takehome:{
+ challenge:"Do a seven-day fast from one game — the one you'd least like to fast from. Note what day three feels like. That feeling is the data.",
+ practice:"Decide a monthly in-game spending number in advance and write it down where someone else can see it. It does not have to be zero.",
+ prep:"Read Psalm 101:2-3 and Philippians 4:8 before Session 7. Bring one game you're unsure about."
+},
+slides:[
+ {kicker:"Session 6 of 10 · Formation", h:"Desire by Design", body:"<div class='body'>These systems are not accidentally hard to stop.</div>", notes:"Open with 'Name that mechanic' from the glossary. Then the premise question: who decided these existed?"},
+ {kicker:"Anchor · 1 Corinthians 6:12", h:"", body:"<blockquote>“All things are lawful for me,” but I will not be brought under the power of anything.</blockquote><div class='attrib'>1 Corinthians 6:12, WEB</div>", notes:"Same slogan as Session 1, different second half. Paul never says the thing is forbidden. He asks who is in charge."},
+ {kicker:"The machine", h:"Three mechanics do most of the work", body:"<div class='body'><ul><li>Variable reward — you don't know when the good thing comes</li><li>Streaks and dailies — missing a day is made to cost</li><li>Scarcity — the item leaves on Sunday</li></ul></div>", notes:"Describe, don't denounce. Note the lineage: these were refined in slot machine design and imported. Knowing this doesn't make anyone immune — but it does mean 'I can't stop' usually isn't a character verdict."},
+ {kicker:"The test", h:"Could you stop for thirty days?", body:"<div class='body'>And how do you know?<br><br>Everyone believes they could, until they try.</div>", notes:"This is Paul's question in plain clothes. The honest version of the test is to actually attempt it, which is tonight's challenge."},
+ {kicker:"The money", h:"Free-to-play means someone else is paying", body:"<div class='body'>The design is tuned to find people who will pay a lot.<br>The industry has a name for them.<br><br>Christians genuinely disagree about whether a randomized purchase is gambling.</div>", notes:"Be fair here. Several countries have regulated loot boxes; Belgium restricted them. You can hold either view of the category and still owe an answer on stewardship."},
+ {kicker:"Case study", h:"Four hundred and twelve dollars", body:"<div class='body'>Josh, 16. Summer job money. Receipts turned off.<br>“I'd do it again if the character came back.”<br><br>Four questions tangled in one story. Separate them.</div>", notes:"Twelve minutes. The concealment matters more than the amount. 'I'd do it again' matters more than both. Don't let the group pile on."},
+ {kicker:"Before we meet again · one", h:"Decide a number", body:"<div class='body'>A monthly in-game spending limit, set in daylight,<br>written where someone else can see it.<br><br>It doesn't have to be zero.</div>", notes:"The point is that it was decided in advance, not two pulls away from the thing they wanted."},
+ {kicker:"Before we meet again · two", h:"Seven days off", body:"<div class='body'>Pick the game you'd least like to fast from.<br><br>Pay attention to day three. That feeling is the data.</div>", notes:"Sell this properly — it's the most revealing exercise in the semester. Preview Session 7 and pray for whoever is going to find day three hard."}
+]
+},
+
+{
+n:7, unit:"Unit Three · Content and Character", title:"Violence, Story, and What We Behold",
+subtitle:"Depiction is not endorsement — and consumption is not automatically harmless",
+bigIdea:"Scripture depicts terrible violence without approving it, so a blanket ban on dark content misreads the Bible. The real question is narrower and harder: what is this story asking me to enjoy?",
+icebreaker:{
+  title:"Rate the Bible",
+  how:"In pairs, name a biblical narrative that would earn a mature rating and say why — Judges 19, Ehud and Eglon, the crucifixion, Herod's slaughter of the infants. Two minutes, then share one each.",
+  why:"It removes the easy objection before anyone can raise it. Nobody can argue that depicted violence is automatically disqualifying while holding a book that contains Judges."
+},
+anchor:{ref:"Philippians 4:8",
+  text:"Finally, brothers, whatever things are true, whatever things are honorable, whatever things are just, whatever things are pure, whatever things are lovely, whatever things are of good report: if there is any virtue and if there is anything worthy of praise, think about these things.",
+  gist:"Often misread as a content filter that bans anything dark. Paul is describing where the mind settles and dwells, not a list of subjects it may never encounter. Lamentations is true; Judges is true; the cross is not lovely to look at and is the centre of everything."},
+support:[
+ {ref:"Psalm 101:2-3", gist:"“I will set no vile thing before my eyes.” The psalm is a king's charter for how he will govern his own house. Notice the domain: what he permits into his household, deliberately."},
+ {ref:"Psalm 11:5", gist:"God's soul hates “him who loves violence.” The object of the verdict is the lover, not the depiction. This is the hinge verse for the session."},
+ {ref:"Romans 14:22-23", gist:"Whatever is not from faith is sin. A doubting conscience makes an otherwise permitted thing wrong for that person — which is why this session cannot end in a single group rule."},
+ {ref:"1 Corinthians 8:9-13", gist:"Liberty is limited by love for the person whose conscience is weaker. Your freedom is real and it is not the highest value in the room."}
+],
+teaching:[
+ {h:"Depiction is not endorsement",body:[
+   "The Bible narrates assassination, genocide, rape, and torture, sometimes in detail, and does not moralize at the reader in the moment.",
+   "So the argument “this game contains violence, therefore it is forbidden” cannot be made from Scripture without also indicting Scripture.",
+   "That clears the ground. It does not answer anything yet."]},
+ {h:"The question is what you're asked to love",body:[
+   "Psalm 11:5 puts the verdict on the person who loves violence, not on the account of violence. Judges shows you atrocity and expects horror. Some games show you atrocity and expect delight.",
+   "So the sharpest question is about invitation: what does this game want me to enjoy? Competence? A story? Cruelty itself? Humiliating a real person on the other end of a headset?",
+   "And a second question about accumulation: what has this made me numb to? Numbness is the actual damage, and it is gradual enough to be invisible."]},
+ {h:"Conscience binds, and love limits",body:[
+   "Romans 14 means that a person who plays with a doubting conscience is doing wrong even if the game is fine. Their doubt is the issue, not the content.",
+   "1 Corinthians 8 means that a person with a clear conscience still owes love to the person who doesn't. Freedom does not entitle you to be careless with someone else's formation.",
+   "Which is why this session cannot produce one rule for the group. It produces a shared tool and a commitment to charity across the difference."]}
+],
+plan:[
+ {clock:"0:00", mins:5, h:"Welcome and “rate the Bible”", script:"Run it in pairs. Collect two or three examples. Then say the thesis in one sentence: <b>the Bible shows terrible things without approving them, so “it depicts violence” cannot be the whole objection.</b>", bullets:["Someone will name the crucifixion. That's the strongest example — let it stand."]},
+ {clock:"0:05", mins:3, h:"Anchor reading and prayer", script:"Read <b>Philippians 4:8</b>, then <b>Psalm 11:5</b>. Note the shift: from what we dwell on to what we love. Pray for honesty about our own delight.", bullets:[]},
+ {clock:"0:08", mins:10, h:"Teaching and the four-question filter", script:"Points one and two quickly; spend the time on the <b>filter</b>. Then Romans 14 and 1 Corinthians 8 — <b>say explicitly that the group will not agree tonight and that this is fine.</b>", bullets:["Write the four questions somewhere visible.","Name the numbness point; it's the one people remember."]},
+ {clock:"0:18", mins:12, h:"Case study and discussion", script:"Use <b>“The Split.”</b> It is about the group itself, so it will get warm. Keep it about how to remain one body, not about who is right.", bullets:["If your group is already divided on this, say so out loud before you start."]},
+ {clock:"0:30", mins:6, h:"Application: run the filter", script:"Everyone applies the four questions to one game in their own library — the one they were least sure about. Silent work, then one voluntary share.", bullets:["Do not ask anyone to name the game."]},
+ {clock:"0:36", mins:4, h:"Close and preview", script:"Preview Session 8: avatars, anonymity, and identity. Close by praying for charity between people who will land differently on tonight's question.", bullets:[]}
+],
+cases:[
+ {title:"The Split", tagline:"Primary case · the disagreement is in this room",
+  story:"Half your group plays a military shooter together on Thursday nights. They describe it as the closest thing they have to a men's group. Another member believes the game is straightforwardly wrong — he says the point of it is to enjoy killing, and that calling it fellowship makes it worse, not better. He has stopped coming on the Thursdays and is now considering whether he can stay in the small group at all. Nobody has been rude. Everybody is upset.",
+  questions:["Steelman the objector as strongly as you can, then steelman the Thursday players as strongly as you can.",
+   "Romans 14 says a doubting conscience makes a thing wrong for that person. 1 Corinthians 8 says liberty is limited by love. What do these two texts require of each side here?",
+   "What would it cost each side to stay in one group? Is that cost worth paying?"],
+  leaderKey:"<b>Where this should land:</b> not a verdict. The goal is that each side can state the other's position in a way the other would accept. Then the concrete question: does the Thursday game need to be a group activity, or can it be a private friendship? Often the friction isn't the game but the fact that it has become a second, unofficial membership within the group."},
+ {title:"The Numbing", tagline:"Alternate case · nothing dramatic happened",
+  story:"A man in his forties realizes that a scene in a game that would have disturbed him ten years ago now registers as nothing at all. He hasn't become cruel; he's a kind man with a good marriage. But he notices he skips cutscenes he used to care about, and last month he watched genuine news footage of a bombing and felt approximately the same amount as he feels about anything. He isn't sure the two facts are related. He isn't sure they aren't.",
+  questions:["Are the two facts related? What would count as evidence either way?",
+   "Is numbness a sin, a symptom, or a cost of living in this century?",
+   "If he wanted to recover the capacity to be moved, what would he actually do?"],
+  leaderKey:"<b>Where this should land:</b> avoid overclaiming causation — media effects research is genuinely contested and the group shouldn't pretend otherwise. But the pastoral question stands regardless of the science: a Christian is supposed to be someone who can still be moved by evil and by beauty. Practical answers involve deliberate exposure to real suffering, slow art, and lament — Psalms is full of people practicing feeling."}
+],
+discussion:[
+ "Which biblical passage would you be least comfortable seeing rendered faithfully on screen? Why that one?",
+ "Psalm 11:5 puts the verdict on the person who loves violence. Has a game ever asked you to love it rather than just to depict it?",
+ "What have you become numb to? Be specific.",
+ "Romans 14 means someone can sin by doing what is fine for you. Does that change how you talk about your library?",
+ "Is there a game you've quit on conscience? What tipped it?"
+],
+takehome:{
+ challenge:"Run the four questions on one game you're genuinely unsure about. Write your answers down. Act on them within two weeks.",
+ practice:"Watch or read something this week that is meant to move you and let it. Notice whether you can still be moved.",
+ prep:"Read Psalm 139:1-4 and Colossians 3:1-4 before Session 8."
+},
+slides:[
+ {kicker:"Session 7 of 10 · Content and Character", h:"Violence, Story, and What We Behold", body:"<div class='body'>Depiction is not endorsement.<br>Consumption is not automatically harmless.</div>", notes:"Run 'Rate the Bible' first — Judges 19, Ehud, the crucifixion. It removes the easy objection before anyone can raise it."},
+ {kicker:"Clearing the ground", h:"The Bible shows terrible things without approving them", body:"<div class='body'>Assassination. Genocide. Rape. Torture.<br>Narrated, sometimes in detail, without a moral in the margin.<br><br>So “it contains violence” cannot be the whole objection.</div>", notes:"This clears the ground and answers nothing yet. Say that second part out loud or the gamers will think they've won."},
+ {kicker:"Psalm 11:5", h:"The verdict falls on the lover, not the depiction", body:"<div class='body'>Judges shows you atrocity and expects horror.<br><br>Some games show you atrocity and expect delight.</div>", notes:"This is the hinge of the session. The question is never what is on screen; it's what the screen is asking you to enjoy."},
+ {kicker:"The tool", h:"Four questions for any game", body:"<div class='body'><ul><li>What is this asking me to enjoy?</li><li>What does it call good?</li><li>What has it made me numb to?</li><li>Would I still play it if the group were in the room?</li></ul></div>", notes:"Write these where they can copy them. The numbness question is the one people remember a month later."},
+ {kicker:"Romans 14 · 1 Corinthians 8", h:"Conscience binds. Love limits.", body:"<div class='body'>A doubting conscience makes a permitted thing wrong — for that person.<br><br>A clear conscience still owes love to the person who doesn't have one.</div>", notes:"Say explicitly: this group will not agree tonight, and that is the correct outcome. We're building a shared tool and a commitment to charity, not a rule."},
+ {kicker:"Case study", h:"The split", body:"<div class='body'>Half the group plays together on Thursdays.<br>One member thinks the game is straightforwardly wrong — and has stopped coming.<br><br>Nobody has been rude. Everybody is upset.</div>", notes:"Twelve minutes, and it will get warm. Keep it on how to remain one body. Make each side state the other's view in a form the other accepts."},
+ {kicker:"Now, quietly", h:"Run the filter on your own library", body:"<div class='body'>Pick the game you were least sure about.<br>Four questions. Write the answers.<br><br>Nobody has to name the game.</div>", notes:"Silent work for two or three minutes, then one voluntary share. Do not press anyone."},
+ {kicker:"Next time", h:"Who am I when nobody knows my name?", body:"<div class='body'>Avatars, anonymity, and identity.</div>", notes:"Close by praying for charity between people who landed differently tonight. Ask them to read Psalm 139:1-4 and Colossians 3:1-4."}
+]
+},
+{
+n:8, unit:"Unit Three · Content and Character", title:"Avatars and the Anonymous Self",
+subtitle:"Who you are when nobody knows your name is who you are",
+bigIdea:"Identity in Christ is given, not earned by rank, and anonymity does not create a second self — it reveals the one already there.",
+icebreaker:{
+  title:"Name your main",
+  how:"Everyone describes the character, class, or playstyle they gravitate to — tank, healer, sniper, builder, speedrunner, the one who wanders off to look at scenery. Then ask what that choice says about them in real life. It is almost always accurate.",
+  why:"It turns an amusing detail into the session's premise: the avatar is not a mask over the self, it's a report about the self."
+},
+anchor:{ref:"Psalm 139:1-3",
+  text:"Yahweh, you have searched me, and you know me. You know my sitting down and my rising up. You perceive my thoughts from afar. You search out my path and my lying down, and are acquainted with all my ways.",
+  gist:"The psalm removes the category of anonymity entirely. There is no account, no server, and no lobby where a person is unobserved — which is either the most threatening or the most freeing thing in the session, depending on who is listening."},
+support:[
+ {ref:"Colossians 3:3-4", gist:"Your life is hidden with Christ in God. The identity is already settled and already secure, which is why it cannot be improved by a rank and cannot be destroyed by a losing streak."},
+ {ref:"Colossians 3:8-10", gist:"Put off anger, wrath, malice, slander, and filthy speech — you have put on the new self. Paul lists exactly the register of a bad voice chat, and calls it clothing you take off."},
+ {ref:"Luke 12:2-3", gist:"Nothing covered will fail to be revealed; what was whispered in inner rooms will be proclaimed on the housetops. Written before microphones and remarkably specific."},
+ {ref:"2 Corinthians 5:17", gist:"Anyone in Christ is a new creation. The new self is the true one; the anonymous self is the leftover."}
+],
+teaching:[
+ {h:"Identity is given, not ranked",body:[
+   "Competitive systems supply a number that claims to say what you are worth, updates constantly, and is visible to strangers. That is a remarkably efficient idol.",
+   "Colossians says your life is hidden with Christ — already located, already safe. A rank cannot add to a settled identity and cannot subtract from it.",
+   "The pastoral tell is not how much someone plays but how they talk after a loss. Listen for language about worth rather than about performance."]},
+ {h:"Roleplay is fine; identity laundering is not",body:[
+   "Playing a character is ancient and legitimate. Actors, novelists, and children all do it, and Scripture never objects.",
+   "The line is between playing a character and using a character to become someone you would be ashamed to be. The first is craft; the second is a disguise, and Luke 12 says the disguise is temporary.",
+   "A useful question: does the avatar let you practice something, or does it let you avoid being accountable for something?"]},
+ {h:"Anonymity reveals rather than creates",body:[
+   "The common assumption is that anonymity turns decent people cruel. The more uncomfortable reading is that it removes the social cost of cruelty that was already available.",
+   "Colossians 3:8 lists anger, malice, slander, and foul speech, and says put them off like clothes. That is precisely the vocabulary of a bad lobby.",
+   "Psalm 139 is the antidote and it is not a threat. Nobody is unwatched, and the one watching is the one who searched us out and stayed."]}
+],
+plan:[
+ {clock:"0:00", mins:5, h:"Welcome and “name your main”", script:"Run it. It's fun and it takes two minutes. Then the hinge question: <b>“Does your main say anything true about you?”</b> Let the room laugh at how accurate it is.", bullets:["Non-gamers can answer with a board game role or a position on a sports team."]},
+ {clock:"0:05", mins:3, h:"Anchor reading and prayer", script:"Read <b>Psalm 139:1-3</b> slowly. Ask whether it feels like comfort or exposure. <b>Both answers are honest</b> and you want both in the room. Pray it back.", bullets:[]},
+ {clock:"0:08", mins:10, h:"Teaching: given identity, roleplay, anonymity", script:"Point one for anyone whose worth is tied to a number. Point two protects legitimate roleplay so the group doesn't overcorrect. Point three is the confronting one — <b>anonymity reveals rather than creates.</b>", bullets:["Read Colossians 3:8 aloud and let the group notice it's a lobby transcript."]},
+ {clock:"0:18", mins:12, h:"Case study and discussion", script:"Use <b>“Two Names.”</b> Do not let the group settle for “he should be nicer.” Ask what the split is <i>for</i> — what it protects and what it lets him have.", bullets:["Someone in your room does this. Speak accordingly."]},
+ {clock:"0:30", mins:6, h:"Application", script:"Assign the voice chat exercise: <b>play one session as though this group could hear everything you say.</b> Then note, gently, that this is not a hypothetical.", bullets:["Also ask anyone whose mood is tracked by a rank to say so to one person tonight."]},
+ {clock:"0:36", mins:4, h:"Close and preview", script:"Preview Session 9: guilds, clans, and whether online friendship is real. Close praying Psalm 139 as comfort rather than as warning.", bullets:[]}
+],
+cases:[
+ {title:"Two Names", tagline:"Primary case · the same man, twice",
+  story:"Sam serves on the welcome team. People describe him as gentle and unusually good at remembering names. He is also, in ranked voice chat, someone his teammates report and mute — sarcastic, contemptuous, occasionally vicious about people's mothers. He does not think of these as the same person doing both things, and if pressed he would say the lobby version isn't real. A younger man from the youth group joined his lobby by accident last month and heard everything. He hasn't told anyone at church.",
+  questions:["Sam says the lobby version isn't real. Is he lying, or does he believe it — and does the difference matter?",
+   "What is the split doing for him? What does the second name let him have that the first one can't?",
+   "The younger man heard. What now — for Sam, for the young man, and for whoever finds out?"],
+  leaderKey:"<b>Where this should land:</b> Luke 12:2-3 is the text and it should be read aloud during the discussion, not before. Resist the easy conclusion that the church version is the fake one — both are real, and that's the problem. Watch for the group's own discomfort; several of them are Sam to some degree, and the tone you take here determines whether anyone admits it."},
+ {title:"Ranked Season", tagline:"Alternate case · the number that decides how the day went",
+  story:"A young woman notices that her mood on any given day is now largely determined by whether her rank went up or down. She knows this is absurd. She has said so herself, laughing. She also checks it before she checks anything else in the morning, and she cried in the car after a demotion last week and told nobody.",
+  questions:["What is the number actually promising her?",
+   "Colossians says her life is hidden with Christ. What would it look like for that to be more real to her at 7am than the rank is?",
+   "She knows it's absurd and it hasn't helped. Why doesn't knowing fix it — and what does that tell us about how change happens?"],
+  leaderKey:"<b>Where this should land:</b> tie it back to Session 4 — information doesn't undo repetition. The rank has a daily liturgy and Colossians 3 currently does not. The practical answer is a competing repetition, placed earlier in the day, plus one person she tells. Handle gently; this case is common and the person it describes may be in the room."}
+],
+discussion:[
+ "Does Psalm 139 read to you as comfort or as exposure? Answer honestly rather than correctly.",
+ "Is there a gap between how you speak in a game and how you speak at church? How big?",
+ "What does your rank, level, or completion percentage promise you that it can't deliver?",
+ "Colossians 3:8 lists anger, malice, and slander as clothes you take off. What would taking them off actually look like on Thursday night?",
+ "Who has seen you at your worst online, and are they still around?"
+],
+takehome:{
+ challenge:"Play one full session as though this small group could hear every word you say. Afterward, write one sentence about what you changed.",
+ practice:"If your mood is tied to a number, say that out loud to one person this week. That's the whole exercise.",
+ prep:"Read Hebrews 10:24-25 and 3 John 13-14 before Session 9."
+},
+slides:[
+ {kicker:"Session 8 of 10 · Content and Character", h:"Avatars and the Anonymous Self", body:"<div class='body'>Who you are when nobody knows your name is who you are.</div>", notes:"Run 'Name your main' first. Then ask whether it says anything true about them. It almost always does."},
+ {kicker:"Anchor · Psalm 139:1-3", h:"", body:"<blockquote>Yahweh, you have searched me, and you know me… You search out my path and my lying down, and are acquainted with all my ways.</blockquote><div class='attrib'>Psalm 139:1-3, WEB</div>", notes:"Ask whether it lands as comfort or exposure. Both are honest answers and you want both voiced in the room."},
+ {kicker:"Point one · Colossians 3:3", h:"A rank cannot add to a settled identity", body:"<div class='body'>A number that claims to say what you're worth,<br>updates constantly,<br>and strangers can see it.<br><br>That is a very efficient idol.</div>", notes:"The pastoral tell isn't hours played. It's how someone talks after a loss — listen for language about worth rather than performance."},
+ {kicker:"Point two", h:"Roleplay is craft. Disguise is something else.", body:"<div class='body'>Does the avatar let you <em>practice</em> something,<br>or let you avoid being accountable for something?</div>", notes:"Protect legitimate roleplay here or the group will overcorrect. Actors, novelists and children all play characters, and Scripture never objects."},
+ {kicker:"Point three · Colossians 3:8", h:"Anonymity doesn't create the self. It removes the cost.", body:"<div class='body'>Anger. Wrath. Malice. Slander. Filthy speech.<br><br>Paul is listing clothes to take off.<br>He has also written down a lobby transcript.</div>", notes:"Read the verse aloud and let the group notice. Then Luke 12:2-3: what was whispered in inner rooms will be proclaimed on the housetops — written before microphones."},
+ {kicker:"Case study", h:"Two names", body:"<div class='body'>Gentle on the welcome team. Muted and reported in ranked chat.<br>He'd say the lobby version isn't real.<br><br>A boy from youth group joined his lobby by accident and heard everything.</div>", notes:"Twelve minutes. Don't settle for 'he should be nicer.' Ask what the split is for. Several people in your room are Sam to some degree — your tone decides whether any of them admit it."},
+ {kicker:"Before we meet again", h:"Play as though we could hear you", body:"<div class='body'>One full session. Every word.<br><br>Then write one sentence about what you changed.</div>", notes:"Add gently: this isn't hypothetical. Psalm 139 already said so."},
+ {kicker:"Next time", h:"Is a guild a church?", body:"<div class='body'>Digital community, real friendship, and the stubbornness of bodies.</div>", notes:"Close praying Psalm 139 as comfort, not as warning. Ask them to read Hebrews 10:24-25 and 3 John 13-14."}
+]
+},
+
+{
+n:9, unit:"Unit Four · Community and Mission", title:"Guilds, Clans, and the Body",
+subtitle:"Online friendship is real friendship — and it is not a substitute for a body in a room",
+bigIdea:"The New Testament practises friendship at a distance and still insists on presence. Digital community is genuine and partial, and naming both halves is the pastoral work.",
+icebreaker:{
+  title:"The teammate you've never met",
+  how:"Ask who has been genuinely helped by someone they have never met in person — carried through a hard patch, taught something, checked on. Two people tell the story in ninety seconds each.",
+  why:"It establishes the session's first claim through testimony rather than argument, so that when you later insist on embodiment, nobody thinks you are dismissing what they've experienced."
+},
+anchor:{ref:"Hebrews 10:24-25",
+  text:"Let's consider how to provoke one another to love and good works, not forsaking our own assembling together, as the custom of some is, but exhorting one another, and so much the more as you see the Day approaching.",
+  gist:"The command is not merely to gather but to gather in order to do something to each other — provoke, exhort. The purpose clause is what most online community is missing, not the gathering itself."},
+support:[
+ {ref:"3 John 13-14", gist:"John says he had much to write but would rather not use ink and pen — he hopes to see them shortly and speak face to face. The New Testament's own verdict on remote communication: real, useful, and second-best."},
+ {ref:"Acts 2:42-47", gist:"Teaching, fellowship, breaking bread, prayer, shared possessions, daily presence, food in homes. Notice how much of it cannot be done without bodies in a room."},
+ {ref:"1 Thessalonians 2:8", gist:"Paul shares not only the gospel but his own soul, because they had become dear. Ministry as self-giving presence, not content delivery."},
+ {ref:"Proverbs 27:17", gist:"Iron sharpens iron. The image requires contact and friction, and it is uncomfortable by design."}
+],
+teaching:[
+ {h:"Digital fellowship is real",body:[
+   "Most of the New Testament is letters — remote communication, written to people the writer could not reach, and it is Scripture.",
+   "So a guild that carries someone through a bad year is doing something genuine, and a Christian who says otherwise is arguing with Paul's postal habits.",
+   "Start here, and mean it, or the person who most needs this session will stop listening in the first minute."]},
+ {h:"And the New Testament still wants a body in the room",body:[
+   "John writes that he would rather not use ink and pen; he wants to come and speak face to face. He is not dismissing his own letter. He is ranking it.",
+   "Acts 2 is full of things that require presence — bread broken, homes entered, possessions shared, meals eaten. A screen can carry words. It cannot carry bread.",
+   "Hebrews 10 adds the purpose: we assemble in order to provoke each other. Provocation at a distance is easy to leave."]},
+ {h:"What guilds do that churches should",body:[
+   "Be honest about this. Guilds often have clearer belonging, a stated shared purpose, a role for every member, regular reliable rhythms, and immediate practical help.",
+   "When someone says their guild is more real community than their church, they are frequently reporting accurately about the church rather than being seduced by the guild.",
+   "The right response is not to defend the church but to ask what we could learn — and then to offer the thing a guild structurally cannot: a body that shows up, a table, and a covenant you cannot log out of."]}
+],
+plan:[
+ {clock:"0:00", mins:5, h:"Welcome and “the teammate you've never met”", script:"Two stories, ninety seconds each. <b>Do not qualify them afterwards.</b> Let the testimony stand for now; the qualification comes in the teaching block and will land better for the delay.", bullets:["If nobody volunteers, tell one yourself."]},
+ {clock:"0:05", mins:3, h:"Anchor reading and prayer", script:"Read <b>Hebrews 10:24-25</b>, then <b>3 John 13-14</b>. Ask them to notice that the second one is a letter complaining about letters. Pray for the lonely people in the room without identifying them.", bullets:[]},
+ {clock:"0:08", mins:10, h:"Teaching: real, partial, and what we should learn", script:"Point one must be generous and unqualified. Point two is the ranking. Point three is the one that costs us something — <b>guilds often do belonging better than we do</b>, and admitting it is the price of being believed.", bullets:["“A screen can carry words. It cannot carry bread.” Use that line.","Have a specific example of something your church does badly. Name it."]},
+ {clock:"0:18", mins:12, h:"Case study and discussion", script:"Read <b>“He Isn't Wrong.”</b> The whole test of this session is whether the group can hear a true criticism of the church without defending itself.", bullets:["If they get defensive, stop and name it kindly. That reaction is the material."]},
+ {clock:"0:30", mins:6, h:"Application: two acts", script:"Assign both. <b>One embodied act</b> with someone from this group in the next fortnight — a meal, a lift, a hand with something. <b>One act of real care</b> for someone you only know online.", bullets:["Get them to name the person out loud. Unnamed intentions don't happen."]},
+ {clock:"0:36", mins:4, h:"Close and preview", script:"Preview Session 10 — the last one: play as mission, and each person writes a personal rule of play. Tell them to come ready to write. Close in prayer.", bullets:["Warn them the final session ends with sharing something written."]}
+],
+cases:[
+ {title:"He Isn't Wrong", tagline:"Primary case · a true criticism of the church",
+  story:"Tom is twenty-six and has been in your church for four years. He tells the group that his guild is more real community than church has ever been, and gives evidence: eleven people noticed within a day when he went quiet after his diagnosis, two of them called, one flew to see him. When he was in hospital, three people from church sent messages and nobody visited. He is not angry and he is not leaving. He just wants somebody to admit he is describing something true.",
+  questions:["Before any correction — is Tom right? Say so plainly if he is.",
+   "What does his guild have structurally that our group does not, and could we have it?",
+   "What can the church offer Tom that the guild structurally cannot? Be concrete; don't say “Jesus” and stop there."],
+  leaderKey:"<b>Where this should land:</b> the group must concede the factual claim before offering anything else, and you should model that first. Structural advantages a guild has: clear membership, a role for everyone, reliable rhythms, low-friction visibility of absence. What a church has that a guild cannot: bread, water, bodies, a covenant that survives you being unpleasant, and a membership you cannot be dropped from for underperforming. End with one concrete change your group will actually make."},
+ {title:"The Discord Small Group", tagline:"Alternate case · a practical decision",
+  story:"Two members of your group have proposed moving the meeting online permanently. Their reasons are good: one has a disability that makes the journey costly, one has small children and no childcare, and attendance is genuinely higher on the nights you've met remotely. A third member says that if it goes online she'll drop out, because she gets nothing from a screen. All three are being reasonable.",
+  questions:["Is there an answer here that isn't a compromise that satisfies nobody?",
+   "What is actually lost when this group meets on a screen? Name three specific things.",
+   "3 John ranks presence above ink without condemning ink. How does that ranking help you decide?"],
+  leaderKey:"<b>Where this should land:</b> a real decision, not a principle. Workable shapes: a mostly-in-person rhythm with a reliable remote option rather than an ad hoc one; hosting at the home of the member with mobility constraints; the group organizing childcare as a service rather than a favor. The disability point deserves particular weight — remote access is often the difference between inclusion and exclusion, and treating embodiment as an absolute can quietly exclude people."}
+],
+discussion:[
+ "Who has actually shown up for you in the last year? List them. Where did you meet them?",
+ "Is there something your guild, clan, or server does better than this small group does? Say it; nobody will be offended.",
+ "What can only happen when people are in a room together? Name three things.",
+ "Hebrews says we gather to provoke one another. When did someone last provoke you toward love and good works?",
+ "If you disappeared for three weeks, who would notice first — and where would they notice it?"
+],
+takehome:{
+ challenge:"Do one embodied thing with someone from this group before we meet again — a meal, a lift, an hour of help. Name the person tonight.",
+ practice:"Do one act of real care for someone you only know online. Not a comment. Something that costs you.",
+ prep:"Come to Session 10 ready to write. You'll be drafting a personal rule of play and sharing part of it."
+},
+slides:[
+ {kicker:"Session 9 of 10 · Community and Mission", h:"Guilds, Clans, and the Body", body:"<div class='body'>Online friendship is real friendship.<br>It is also not a substitute for a body in a room.</div>", notes:"Open with two testimonies of help from someone never met in person. Do not qualify them afterwards — the qualification comes later and lands better for the delay."},
+ {kicker:"First, and mean it", h:"Most of the New Testament is remote communication", body:"<div class='body'>Letters. Written to people the writer couldn't reach.<br>And it is Scripture.<br><br>A guild that carried someone through a bad year did something real.</div>", notes:"Be generous and unqualified here or the person who most needs this session stops listening in minute one."},
+ {kicker:"Anchor · 3 John 13-14", h:"A letter complaining about letters", body:"<div class='body'>John would rather not use ink and pen.<br>He hopes to come and speak face to face.<br><br>He isn't dismissing his own letter. He's ranking it.</div>", notes:"Then Acts 2 — bread broken, homes entered, possessions shared. A screen can carry words. It cannot carry bread."},
+ {kicker:"Hebrews 10:24-25", h:"We assemble in order to provoke each other", body:"<blockquote>Let's consider how to provoke one another to love and good works, not forsaking our own assembling together…</blockquote><div class='attrib'>Hebrews 10:24-25, WEB</div>", notes:"The purpose clause is what most online community is missing — not the gathering. Provocation at a distance is very easy to leave."},
+ {kicker:"The uncomfortable part", h:"Guilds often do belonging better than we do", body:"<div class='body'>Clear membership. A role for everyone.<br>Reliable rhythms. Absence gets noticed within a day.<br><br>When someone says their guild is more real, they're often reporting accurately about us.</div>", notes:"Admitting this is the price of being believed. Have a specific example of something your church does badly, and name it."},
+ {kicker:"Case study", h:"He isn't wrong", body:"<div class='body'>Eleven guildmates noticed within a day. Two called. One flew out.<br>Three church messages. No visits.<br><br>He isn't angry. He wants someone to admit he's describing something true.</div>", notes:"The whole test of this session is whether your group can hear a true criticism without defending itself. If they get defensive, stop and name it kindly — that reaction is the material."},
+ {kicker:"Before we meet again", h:"Two things", body:"<div class='body'>One embodied act with someone from this group.<br>One act of real care for someone you only know online.<br><br>Name both people out loud tonight.</div>", notes:"Unnamed intentions don't happen. Make them say the names."},
+ {kicker:"Next time · the last one", h:"Come ready to write", body:"<div class='body'>Play as mission — and your own rule of play.</div>", notes:"Warn them the final session ends with sharing something written. Close in prayer."}
+]
+},
+
+{
+n:10, unit:"Unit Four · Community and Mission", title:"Play as Mission",
+subtitle:"Loving your neighbour in the lobby — and writing your own rule of play",
+bigIdea:"Gaming spaces are neighbourhoods with real people in them, and the Christian question is not how to evangelize a lobby but how to be genuinely good to be matched with.",
+icebreaker:{
+  title:"Best and worst",
+  how:"Ask for one story of a Christian bringing up faith in a game that went badly, and one that went well. Both usually exist in the room, and the contrast is nearly always about tone rather than content.",
+  why:"It surfaces the group's real anxiety — that witness means being the person everyone mutes — and lets the session address it directly rather than around it."
+},
+anchor:{ref:"Colossians 4:5-6",
+  text:"Walk in wisdom toward those who are outside, redeeming the time. Let your speech always be with grace, seasoned with salt, that you may know how you ought to answer each one.",
+  gist:"Paul's missional instruction is almost entirely about manner. Wisdom toward outsiders, grace in speech, salt, and an answer fitted to the particular person. Nothing here is a script."},
+support:[
+ {ref:"Matthew 5:14-16", gist:"Let your light shine before people so they see your good works. The visible thing is conduct; the glory goes elsewhere. This is how presence precedes proclamation."},
+ {ref:"1 Peter 3:15", gist:"Be ready to give a defence — with gentleness and respect. Most Christian witness in gaming spaces fails on the second half, not the first."},
+ {ref:"1 Corinthians 9:19-23", gist:"Paul becomes all things to all people to save some. Entering someone's world on its own terms is apostolic practice, not compromise."},
+ {ref:"Micah 6:8", gist:"Do justice, love kindness, walk humbly. A complete ethic for a voice channel, and short enough to remember mid-match."}
+],
+teaching:[
+ {h:"Presence before proclamation",body:[
+   "The most common Christian failure in a lobby is not silence. It is arriving with an announcement and no relationship.",
+   "Matthew 5 puts good works first and lets people ask. In practice that means being the teammate who doesn't rage, doesn't blame, and stays after a loss.",
+   "That is unglamorous and it is the actual assignment. A reputation for being decent is a longer-lasting witness than a paragraph in chat."]},
+ {h:"Manner is most of the message",body:[
+   "1 Peter 3:15 attaches gentleness and respect to the defence of the faith, and the attachment is not optional decoration.",
+   "Colossians 4:6 says speech seasoned with salt and fitted to each person — which rules out the copy-pasted approach almost entirely.",
+   "Also: defend the person being harassed. Most lobbies contain someone getting a bad time, and stepping in publicly is a more legible sign than anything you could say about yourself."]},
+ {h:"Write a rule of play",body:[
+   "A rule of life is an old Christian practice — a short, written, personal pattern that you can keep and revisit. Applied here, it's a rule of play.",
+   "Six lines: what I play, when I play, how much, with whom, what I spend, and why. Written down, shared with one person, revisited in three months.",
+   "This is the whole semester made portable. Everything from Sessions 1 through 9 should have a fingerprint on it."]}
+],
+plan:[
+ {clock:"0:00", mins:5, h:"Welcome and “best and worst”", script:"Two stories. Then name the anxiety out loud: <b>most of us are afraid that witnessing means being the person everyone mutes.</b> Say that this session is largely about not being that person.", bullets:["Say up front that the session ends with writing, so nobody is ambushed."]},
+ {clock:"0:05", mins:3, h:"Anchor reading and prayer", script:"Read <b>Colossians 4:5-6</b> and <b>1 Peter 3:15</b>. Point out that both are overwhelmingly about manner. Pray for the people they play with by name if they'll offer names.", bullets:[]},
+ {clock:"0:08", mins:8, h:"Teaching: presence, manner, and a written rule", script:"Keep this shorter than usual — you need the time at the end. Points one and two in about five minutes, then introduce the <b>rule of play</b> and show them the six lines.", bullets:["Have your own rule of play written. Read it. This matters more than the teaching."]},
+ {clock:"0:16", mins:9, h:"Case study", script:"Use <b>“The Lobby.”</b> It is short and immediate on purpose — the answer has to fit inside ten seconds of a live match, so don't let the group design a program.", bullets:["Ask what they'd literally say. Words, out loud, now."]},
+ {clock:"0:25", mins:10, h:"Write your rule of play", script:"Silent writing. Give them the printed worksheet from this page. <b>Ten minutes is enough and less is not.</b> Circulate quietly and help anyone stuck on the “why” line.", bullets:["Play something quiet if the silence is hard for your group.","Remind them: specific, small, and keepable beats aspirational."]},
+ {clock:"0:35", mins:5, h:"Share, commission, and close", script:"Each person reads <b>one line</b> from their rule aloud — not the whole thing. Then pray over the group and send them out. This is the last session; say something about what you've watched happen.", bullets:["Pair everyone with one person who will ask them about it in three months.","Set the three-month review date now, before anyone leaves."]}
+],
+cases:[
+ {title:"The Lobby", tagline:"Primary case · you have about ten seconds",
+  story:"You are four minutes into a match. One of your teammates — you can tell from the voice that he is young, maybe thirteen — makes a mistake, and two others start on him. It escalates quickly: his accent, then his mother, then a suggestion about what he should do to himself. He has gone silent. Your microphone is on. The match is still running and everyone is still playing.",
+  questions:["What do you actually say? Words, out loud, now — not a principle.",
+   "Is there anything you do after the match? What, and to whom?",
+   "What would it cost you to speak, and be honest about why that cost is not small?"],
+  leaderKey:"<b>Where this should land:</b> force specific sentences. Groups love to discuss this abstractly and the whole point is that abstraction is useless in ten seconds. Good answers are short, address the boy rather than the abusers, and don't try to win an argument — something like naming him as fine and asking the others to stop. Afterward: a message to the boy, a report, and possibly leaving the group. The cost is real — you will be turned on next, and pretending otherwise makes the exercise dishonest."},
+ {title:"The Streamer's Question", tagline:"Alternate case · what you put on the box",
+  story:"A member of your group streams to a small but steady audience. She has never mentioned her faith on stream and is now wondering whether that's cowardice. Her friend says she should put a Bible verse in her channel description. Another says that would drive off exactly the people she has spent two years building trust with. She has no idea which of them is right.",
+  questions:["Is her silence cowardice, wisdom, or something else that depends on facts we don't have?",
+   "1 Corinthians 9 has Paul adapting to his audience. Where is the line between adapting and hiding?",
+   "What would you advise she do first — and what would make you change that advice?"],
+  leaderKey:"<b>Where this should land:</b> the two friends are arguing about tactics as though it were a matter of faithfulness. The prior question is what her stream is for. If it's a place she is present with people over years, a verse in a description is a weak signal and being visibly kind is a strong one; if she's building a platform, the question changes. Note that 1 Corinthians 9:22 is about flexibility in method, and 9:16 is about not being able to keep quiet — both are Paul."}
+],
+discussion:[
+ "What's the best thing another player has ever done for you? Did you ever tell them?",
+ "1 Peter 3:15 says gentleness and respect. Which of those two do you personally fail at more?",
+ "Have you ever defended someone in a lobby? What happened next?",
+ "Read one line of your rule of play. Just one.",
+ "Looking back across ten sessions — what actually changed, and what didn't?"
+],
+takehome:{
+ challenge:"Keep your rule of play for three months, then review it with the person you were paired with tonight. Put the review date in your calendar before you leave the room.",
+ practice:"This week, be conspicuously good to be matched with once. Stay after a loss. Say something kind to the worst player. Notice what it costs.",
+ prep:"Nothing to prepare. Come back in three months with an honest report."
+},
+slides:[
+ {kicker:"Session 10 of 10 · Community and Mission", h:"Play as Mission", body:"<div class='body'>Not how to evangelize a lobby.<br>How to be genuinely good to be matched with.</div>", notes:"Open with best-and-worst stories. Name the anxiety directly: most of us are afraid that witness means being the person everyone mutes. Tell them now that the session ends with writing."},
+ {kicker:"Anchor · Colossians 4:5-6", h:"", body:"<blockquote>Walk in wisdom toward those who are outside… Let your speech always be with grace, seasoned with salt, that you may know how you ought to answer each one.</blockquote><div class='attrib'>Colossians 4:5-6, WEB</div>", notes:"Almost all of Paul's missional instruction here is about manner. Nothing in it is a script."},
+ {kicker:"Point one · Matthew 5:16", h:"Presence before proclamation", body:"<div class='body'>The teammate who doesn't rage.<br>Who doesn't blame.<br>Who stays after a loss.<br><br>Unglamorous, and the actual assignment.</div>", notes:"The common failure isn't silence — it's arriving with an announcement and no relationship. A reputation for decency outlasts any paragraph in chat."},
+ {kicker:"Point two · 1 Peter 3:15", h:"Gentleness and respect are not decoration", body:"<div class='body'>Most Christian witness in gaming spaces fails on the second half of that verse, not the first.<br><br>And: defend whoever is getting a bad time. That's more legible than anything you could say about yourself.</div>", notes:"Colossians 4:6 — speech fitted to each person — rules out the copy-pasted approach almost entirely."},
+ {kicker:"The last thing", h:"Write a rule of play", body:"<div class='body'>What I play. When. How much.<br>With whom. What I spend. Why.<br><br>Six lines. Shared with one person. Revisited in three months.</div>", notes:"Read your own out loud before they write. This matters more than anything you say tonight."},
+ {kicker:"Case study · ten seconds", h:"The lobby", body:"<div class='body'>A thirteen-year-old makes a mistake. Two teammates start on him — his accent, then his mother, then worse.<br>He's gone quiet. Your mic is on. The match is still running.<br><br>What do you actually say?</div>", notes:"Nine minutes and force specific sentences. Abstraction is useless in ten seconds. Good answers are short, address the boy rather than the abusers, and don't try to win. Be honest about the cost — you get turned on next."},
+ {kicker:"Ten minutes, in silence", h:"Your rule of play", body:"<div class='body'>Specific beats aspirational.<br>Small beats impressive.<br>Keepable beats either.</div>", notes:"Hand out the worksheet. Circulate quietly; most people get stuck on the 'why' line. Ten minutes is enough and less is not."},
+ {kicker:"Session 10 · closing", h:"Read one line", body:"<div class='body'>One line each. Not the whole rule.<br><br>Then we pray, we pair up, and we set the three-month review date before anyone leaves.</div>", notes:"Say something true about what you've watched happen over ten sessions. Pair each person with someone who will ask them about it in three months. Set the date in the room."}
+]
+}
+];
+const RESOURCES = [
+{group:"Scripture and study tools",
+ note:"These are the closest thing to genuinely neutral ground: text, language tools, and cross-references without a denominational argument attached. Start every session's preparation here rather than with a commentary.",
+ items:[
+  {t:"Bible Gateway", w:"biblegateway.com", lean:"n", leanLabel:"Reference", d:"Dozens of English translations plus Indonesian versions including Terjemahan Baru, viewable in parallel. Useful for checking whether a point you're making survives a different translation."},
+  {t:"STEP Bible", w:"stepbible.org", lean:"n", leanLabel:"Reference", d:"Free scholarly tool from Tyndale House, Cambridge. Original-language word study, interlinear, and lexicons with no denominational framing. The best free option when you need to check what a word actually carries."},
+  {t:"Blue Letter Bible", w:"blueletterbible.org", lean:"n", leanLabel:"Reference", d:"Concordance, lexicon, and cross-reference chains. Its commentary library leans conservative Protestant, but the reference layer underneath it is neutral."},
+  {t:"NET Bible", w:"netbible.org", lean:"n", leanLabel:"Reference", d:"A translation published with tens of thousands of translators' notes explaining why each decision was made. Unusually transparent, and free — the notes are often more useful than a commentary for a small group."},
+  {t:"BibleProject", w:"bibleproject.com", lean:"c", leanLabel:"Christian · non-denominational", d:"Free animated videos on biblical themes. Their material on image of God, Sabbath, and the way the Bible handles technology and cities maps directly onto Sessions 2, 3 and 5. Made deliberately to avoid denominational distinctives."},
+  {t:"Public domain translations", w:"World English Bible · KJV · ASV", lean:"n", leanLabel:"Reference", d:"You may reproduce these freely in handouts, slides, and printed material without a permissions request. Every verse quoted in this curriculum uses the World English Bible for that reason."}
+ ]},
+{group:"Christian reflection on technology and games",
+ note:"There is no such thing as a theology book written from nowhere, so the honest approach is to label rather than pretend. Each entry below notes the author's tradition so you can weigh it. Where a book argues something contested, say so to your group rather than presenting it as settled.",
+ items:[
+  {t:"Kevin Schut — Of Games and God: A Christian Exploration of Video Games", w:"Brazos Press, 2013", lean:"c", leanLabel:"Christian · media scholar", d:"The most directly on-topic book for this series, written by a communications professor who actually plays. Chapters on violence, fantasy, gender and community. Somewhat dated on monetization, since it predates the loot box era, but still the best single volume for Sessions 2, 7 and 9."},
+  {t:"John Dyer — From the Garden to the City", w:"Kregel, 2011", lean:"c", leanLabel:"Christian · evangelical, developer", d:"Traces technology through the biblical storyline — creation, fall, redemption — written by a working web developer. Session 3 leans on this shape. Accessible enough to hand to a group member."},
+  {t:"Andy Crouch — The Tech-Wise Family and Culture Making", w:"Baker, 2017 · IVP, 2008", lean:"c", leanLabel:"Christian · broad evangelical", d:"Culture Making is the theological argument for cultivation over condemnation that underlies Session 1. The Tech-Wise Family is the practical household version, with concrete rhythms rather than prohibitions."},
+  {t:"Felicia Wu Song — Restless Devices", w:"IVP Academic, 2021", lean:"c", leanLabel:"Christian · sociologist", d:"A sociologist's account of how digital habits form the self, with proposed counter-practices. Strongest support for Session 4. More academic than the others; read it yourself rather than assigning it."},
+  {t:"Tony Reinke — 12 Ways Your Phone Is Changing You", w:"Crossway, 2017", lean:"c", leanLabel:"Christian · Reformed evangelical", d:"Twelve short chapters on attention, approval and distraction. Useful and unmistakably written from a Reformed position — flag that if your group is mixed."},
+  {t:"Samuel James — Digital Liturgies", w:"Crossway, 2023", lean:"c", leanLabel:"Christian · Reformed evangelical", d:"Argues that the internet forms habits of the heart, using the language of liturgy. Overlaps heavily with Session 4. Same caveat about tradition."},
+  {t:"Love Thy Nerd", w:"lovethynerd.com", lean:"c", leanLabel:"Christian · non-denominational", d:"An ongoing ministry writing about games from inside the hobby rather than at it. Deliberately non-denominational and useful for finding contemporary examples when a case study in this curriculum starts to feel dated."},
+  {t:"Christ and Pop Culture", w:"christandpopculture.com", lean:"c", leanLabel:"Christian · ecumenical", d:"Long-form criticism of games, film and television from writers across several traditions. Good for modelling how to critique a story charitably, which is the skill Session 7 is trying to build."}
+ ]},
+{group:"Research and industry sources",
+ note:"Use these for facts rather than for theology. Nothing here is written from faith, and that is exactly why it belongs — a group is far more persuaded by an accurate description of how a system works than by a warning about it.",
+ items:[
+  {t:"World Health Organization — ICD-11, gaming disorder", w:"icd.who.int", lean:"s", leanLabel:"Research", d:"The WHO includes gaming disorder in ICD-11 as a recognized condition, defined by impaired control, escalating priority over other interests, and continuation despite harm — over a sustained period. Important for Session 6, and important to state carefully: the criteria describe a small minority of players, not most people who play a lot."},
+  {t:"American Psychiatric Association — DSM-5", w:"psychiatry.org", lean:"s", leanLabel:"Research", d:"Internet gaming disorder appears in the DSM-5 section reserved for conditions requiring further study, not as a formal diagnosis. The gap between this and the WHO's position is itself worth mentioning: clinicians genuinely disagree."},
+  {t:"Entertainment Software Association — Essential Facts", w:"theesa.com", lean:"s", leanLabel:"Industry", d:"Annual free report on who plays, how old they are and what they spend. Industry-published, so read the framing sceptically, but the demographic data is the fastest way to correct a group's assumption that gaming is a teenage boys' hobby."},
+  {t:"Pew Research Center — Teens and Video Games", w:"pewresearch.org", lean:"s", leanLabel:"Research", d:"Regular survey work on teen play habits, motivations, and experiences of harassment. Non-partisan and methodologically transparent. The harassment findings are directly useful for Sessions 8 and 10."},
+  {t:"Quantic Foundry — Gamer Motivation Model", w:"quanticfoundry.com", lean:"s", leanLabel:"Research", d:"Free data on why people play, built from hundreds of thousands of survey responses — competition, completion, story, escapism, social connection. Turns Session 4's question, what is this training in me, into something measurable."},
+  {t:"Natasha Dow Schüll — Addiction by Design", w:"Princeton University Press, 2012", lean:"s", leanLabel:"Research", d:"An ethnography of machine gambling design in Las Vegas. Not about video games at all, which is why it is so useful: it documents the deliberate engineering of compulsion loops that later migrated into free-to-play design. The essential background for Session 6."},
+  {t:"Nir Eyal — Hooked", w:"Portfolio, 2014", lean:"s", leanLabel:"Industry", d:"A manual for building habit-forming products, written for product designers. Read it as a primary source rather than as advice — it lets you show your group exactly how the trigger, action, variable reward and investment loop is assembled."},
+  {t:"Neil Postman — Amusing Ourselves to Death and Technopoly", w:"Viking, 1985 · Knopf, 1992", lean:"s", leanLabel:"Criticism", d:"Pre-internet and still the sharpest argument that a medium carries its own message regardless of content. Postman is the intellectual ancestor of most Christian writing on this subject, usually uncredited."},
+  {t:"Sherry Turkle — Alone Together and Reclaiming Conversation", w:"Basic Books, 2011 · Penguin, 2015", lean:"s", leanLabel:"Research", d:"An MIT researcher on what mediated connection does and doesn't provide. Direct background for Session 9. Turkle is sympathetic to technology, which makes her critique harder to dismiss."},
+  {t:"Jane McGonigal — Reality Is Broken", w:"Penguin, 2011", lean:"s", leanLabel:"Advocacy", d:"The strongest optimistic case for games — that they supply meaningful work, clear feedback and voluntary community that ordinary life often withholds. Assign it to whoever in your group is most sceptical. A curriculum that only reads critics is not teaching discernment."},
+  {t:"Andrew Przybylski and Amy Orben — screen time research", w:"Oxford Internet Institute · Cambridge", lean:"s", leanLabel:"Research", d:"Large-scale work finding that associations between screen use and adolescent wellbeing are much smaller than public debate assumes. Include this deliberately as a counterweight — if you present alarming claims without the contrary evidence, the first group member who finds it will discount everything else you said."}
+ ]},
+{group:"Practical tools for households",
+ note:"Hand these to parents. They answer the question most often asked after a session like this one, which is not theological but operational.",
+ items:[
+  {t:"ESRB", w:"esrb.org", lean:"n", leanLabel:"Reference", d:"North American age ratings with detailed content descriptors, plus a searchable database of rating summaries that describe specific content rather than just assigning a letter. Also publishes a free family gaming guide."},
+  {t:"PEGI", w:"pegi.info", lean:"n", leanLabel:"Reference", d:"The European equivalent, with content icons and an explanation of what each age band means. Note that PEGI and ESRB sometimes rate the same game differently, which is a useful conversation in itself."},
+  {t:"Common Sense Media", w:"commonsensemedia.org", lean:"s", leanLabel:"Reviews", d:"Detailed reviews with age guidance, plus separate ratings written by parents and by children. Secular and generally cautious; useful as one input rather than as a verdict."},
+  {t:"HowLongToBeat", w:"howlongtobeat.com", lean:"n", leanLabel:"Reference", d:"Crowd-sourced estimates of how many hours a game takes to finish. Unexpectedly useful for Session 5 — knowing that a game asks for eighty hours before you start it is a stewardship fact."},
+  {t:"Platform family controls", w:"Xbox · PlayStation · Nintendo · Steam · iOS · Android", lean:"n", leanLabel:"Tools", d:"Every major platform now offers time limits, spending limits, communication restrictions and weekly activity reports sent to a parent. Most families in your group do not know these exist. Ten minutes demonstrating one of them may do more good than a session of teaching."}
+ ]}
+];
+
+const EXTRA_CASES = [
+ {title:"The Nine-Year-Old's Headset", s:5, tagline:"Fits Sessions 5, 8 or 10",
+  story:"A mother wants to let her nine-year-old play online with school friends but is uneasy about open voice chat with strangers. Her husband thinks she is being overprotective and points out the boy is already excluded from most playground conversations. Both of them keep making the argument to each other rather than making a decision.",
+  questions:["What is actually at risk, and what is actually being lost by exclusion?","What would a decision look like that takes both parents seriously?","At what age does this answer change, and why that age?"]},
+ {title:"The Bible Study That Meets In Game", s:9, tagline:"Fits Sessions 3 or 9",
+  story:"Four university students hold a weekly Bible study inside a game while their characters sit around a campfire. They say it's the only format that gets all four of them there. A visiting pastor says it isn't a Bible study, it's four people multitasking.",
+  questions:["Is the pastor right?","What would make this format work, and what can it structurally never do?","Would your answer change if the four were housebound?"]},
+ {title:"The Speedrun Marriage", s:5, tagline:"Fits Sessions 5 or 6",
+  story:"A husband has spent eight months attempting to beat a world record. His wife supported it at first and now describes herself as a widow to a stopwatch. He is genuinely close, and points out that this is the first thing he's been excellent at in his adult life.",
+  questions:["Is his point about excellence a real one or a rationalization?","What would you ask him to give up, and what would you ask her to give?","Does a deadline change the answer?"]},
+ {title:"The Church Esports Team", s:10, tagline:"Fits Sessions 3, 9 or 10",
+  story:"Your church is offered sponsorship to run a competitive team for teenagers, with jerseys and a small budget. The sponsor is a local business owner who wants his logo on the shirts and expects results.",
+  questions:["What is the ministry here, precisely?","What happens when a fourteen-year-old is dropped from the roster?","What condition would you attach before agreeing?"]},
+ {title:"The Modded Game", s:7, tagline:"Fits Session 7",
+  story:"A member of your group plays a game he considers fine, but the community around it produces modifications that add sexual content. He doesn't install them. He is on the forums daily and sees them constantly.",
+  questions:["Is the environment around a game part of the game?","Does 'I don't install them' settle it?","What would you actually advise, given he has friends there?"]},
+ {title:"The Gambling Uncle", s:6, tagline:"Fits Session 6",
+  story:"A teenager's uncle, who lost a great deal to sports betting, sees his nephew open loot boxes and says it's exactly the same thing. The boy's father says that's ridiculous because no real money can come out. The uncle asks what difference that makes.",
+  questions:["Answer the uncle's question directly.","Does the inability to cash out matter morally, or only legally?","What would you want the boy to understand by the end of the conversation?"]},
+ {title:"The Grief Save File", s:9, tagline:"Fits Sessions 5, 8 or 9",
+  story:"A woman continues to log into a game she played with her late brother, mostly to stand in places they used to stand. She does this several times a week and has told nobody. She isn't sure whether it is comforting her or keeping the wound open.",
+  questions:["Is this grief work or avoidance? What would distinguish them?","Is there a Christian tradition of returning to places of memory that helps here?","What would you say if she asked you directly?"],
+  care:"Handle this one gently and only in a group with enough trust. If someone in the room is bereaved, ask them privately beforehand rather than discovering it live."},
+ {title:"The Job Offer", s:2, tagline:"Fits Sessions 2 or 6",
+  story:"A programmer in your group is offered a substantial raise to join a mobile game studio. The role is specifically to optimize the monetization systems — tuning how often players are offered purchases and at what price.",
+  questions:["Is the role itself the problem, or the tuning targets?","What would he need to be able to refuse for the job to be takeable?","Does the answer change if he'd be the only Christian in the room where those decisions are made?"]},
+ {title:"The Sunday Tournament", s:5, tagline:"Fits Sessions 5 or 9",
+  story:"A talented teenager qualifies for a tournament held on Sunday mornings. Her family are regular attenders. She has never asked to miss church for anything before.",
+  questions:["Is this different from a sports fixture? Should it be?","What does the fourth commandment actually require here?","What precedent does each possible answer set in her house?"]},
+ {title:"The Confession", s:6, tagline:"Fits Sessions 5, 6 or 8",
+  story:"A man tells you privately that he has been playing during work hours for months, has lied about it twice, and expects to be found out soon. He has told nobody else. He wants to know what to do and he also wants you to tell him it isn't that serious.",
+  questions:["What does he need to hear first?","What is the difference between grace and reassurance here?","What does repentance concretely require in this case?"],
+  care:"If this scenario surfaces something real in the room, stop the study and deal with the person. That is the correct use of the time."},
+ {title:"The Younger Sibling", s:4, tagline:"Fits Sessions 4 or 7",
+  story:"An older brother lets his eight-year-old sister watch him play a game rated well above her age. He argues that watching isn't playing and that she's seen worse on the school bus. Their parents don't know.",
+  questions:["Is watching different from playing?","His point about the school bus is factually true. Does it carry weight?","What is the concealment doing to the situation?"]},
+ {title:"The Anniversary", s:5, tagline:"Fits Sessions 1, 5 or 10",
+  story:"A member of your group realizes he has played the same game most days for eleven years. He has never had a problem he would call a problem. He simply notices, one evening, that eleven years is a long time, and can't decide whether he has been faithful to something or stuck in it.",
+  questions:["Which is it, and what evidence would settle it?","Is longevity in a hobby a virtue?","What would you want him to ask himself before deciding anything?"]}
+];
+
+const GLOSSARY = [
+ {t:"Variable reward", d:"A reward delivered on an unpredictable schedule. Far more compelling than a predictable one, and the single most important mechanic to understand. It is why 'one more' is so hard to refuse."},
+ {t:"Daily / streak", d:"A reward for logging in on consecutive days, structured so that missing one day forfeits accumulated progress. The design converts absence into loss."},
+ {t:"Battle pass", d:"A paid seasonal track of rewards unlocked by playing. Creates a deadline: what you paid for expires if you don't play enough before the season ends."},
+ {t:"Gacha", d:"A randomized draw for a character or item, named after Japanese capsule toy machines. You buy the draw, not the outcome."},
+ {t:"Loot box", d:"The Western term for the same thing. Several countries have regulated or restricted them; Belgium's gambling regulator moved against them and some publishers now disclose drop rates by law or policy."},
+ {t:"Pity timer", d:"A guarantee that after a certain number of unsuccessful draws you will receive the rare item. Presented as consumer protection. It also tells you exactly how much more you need to spend."},
+ {t:"FOMO event", d:"Limited-time content that will not return. Converts a purchase decision into a deadline, which reliably shortens deliberation."},
+ {t:"Whale", d:"Industry term for the small percentage of players who generate most of the revenue. Free-to-play economics depend on finding and retaining them."},
+ {t:"Grind", d:"Repetitive activity required to progress. Neutral in itself — it can be meditative or exploitative depending on whether it exists to be satisfying or to be shortened by a purchase."},
+ {t:"Pay to win", d:"Design where money buys competitive advantage rather than appearance. Worth distinguishing from cosmetic spending; the ethical questions differ."},
+ {t:"Engagement metric", d:"What the studio is measured on internally — daily active users, session length, retention at day seven and day thirty. Knowing what the studio is optimizing for explains most design decisions you find puzzling."}
+];
+
+const HANDBOOK = {
+ shape:[
+  {h:"What this is", p:"Ten sessions of forty minutes, meeting twice a month across a semester. Four units: foundations, formation, content and character, community and mission. Everything a leader needs is on this page — plan, slides, Scripture, cases, questions and take-home work."},
+  {h:"What it is not", p:"It is not an argument for quitting, and it is not a defence of the hobby. Several people will finish the semester playing more thoughtfully rather than less, and that is a legitimate result. If the group concludes that gaming is fine and nothing needs to change, the series has probably failed — but so has it if everyone leaves feeling guilty."},
+  {h:"Who it is for", p:"Mixed groups of gamers and non-gamers, teenagers upward. The material assumes no technical knowledge; the glossary in Session 6 exists to close the gap in two minutes. If your group is entirely non-players, the sessions still work as a study of technology and formation."},
+  {h:"If you only have eight sessions", p:"Merge Sessions 2 and 3 into one foundations session, and merge Sessions 9 and 10 into one closing session that keeps the rule of play exercise. Do not cut Sessions 4, 5 or 6 — the formation unit is the spine of the series."}
+ ],
+ running:[
+  {h:"Preparing in twenty minutes", p:"Read the session's big idea, read the anchor passage in your own translation, read the case study once out loud to yourself, and decide which three of the discussion questions you will use. That is enough. The plan is written so you can teach from it directly."},
+  {h:"Timing", p:"Forty minutes is tight and the plan has no padding. The two places groups overrun are the icebreaker and the case study. Use the built-in timer on this page; it advances through the plan automatically."},
+  {h:"Ground rules to set in Session 1", p:"Nobody defends their library. Nobody prosecutes anyone else's. What is said here stays here. It is acceptable to leave a session having changed your mind, and acceptable to leave having not."},
+  {h:"Handling disagreement", p:"Sessions 6, 7 and 9 will produce real disagreement. That is the design. Your job is not to resolve it but to make sure each side can state the other's position in a form the other would accept. Say out loud, more than once across the semester, that Romans 14 expects Christians to land differently on questions like these."}
+ ],
+ care:[
+  {h:"What may surface", p:"Across ten sessions on this subject you should expect at least one of: a hidden spending problem, a marriage under strain, a teenager being harassed online, someone who has been exposed to sexual content they didn't seek, and someone whose gaming is holding back a depression they haven't named. Plan for this before it happens rather than after."},
+  {h:"When it does", p:"Stop the study. The session is not more important than the person. Follow up privately within forty-eight hours, involve whoever in your church handles pastoral care, and do not attempt to counsel a serious situation alone or in front of a group."},
+  {h:"Where this curriculum stops", p:"This is a discipleship study, not a clinical resource. Compulsive gaming that is damaging someone's work, relationships or health warrants professional help, and saying so is not a failure of faith. If someone describes distress that concerns you — hopelessness, self-harm, an inability to stop that frightens them — direct them to your church's pastoral team and to a qualified professional rather than to the next session."},
+  {h:"A note on shame", p:"The fastest way to ruin this series is to make heavy players feel watched. Watch your own tone in Sessions 5 and 6 particularly. Say the permissions out loud — rest is commanded, play is good, craft is a gift — and say them before the critiques, every time."}
+ ],
+ sourcing:[
+  {h:"On the word neutral", p:"There is no theology written from nowhere. Every author on the resources page comes from somewhere, and pretending otherwise is a worse problem than the bias itself. What this curriculum does instead is label: reference tools that carry no argument, Christian authors with their tradition named, and secular research used for facts rather than for theology."},
+  {h:"How this material was built", p:"Every doctrinal claim rests on the anchor passage in front of it, not on a commentator. Where Christians genuinely disagree — whether loot boxes are gambling, whether violent games are permissible, whether media effects research supports the concerns people raise — the curriculum says so and gives you both sides rather than picking one and hiding the other."},
+  {h:"Verifying before you teach", p:"Read every anchor passage in its own context before the session; a verse that works on a slide can still be doing something different in its chapter. Check quotations against a primary source rather than a quotation site. If you cite a statistic, cite where it came from and how old it is."},
+  {h:"Scripture text on this page", p:"All inline Scripture is the World English Bible, which is public domain, so you may copy, print and project everything here without permission. Swap in your congregation's translation before you teach — the point of using a public domain text was portability, not preference."}
+ ]
+};
+/* ============ helpers ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+const verseBlock = (ref, text, gist) => `
+  <div class="verse">
+    <div class="ref">${ref}<a href="${BG(ref)}" target="_blank" rel="noopener">open in other translations</a></div>
+    <blockquote>${text}</blockquote>
+    ${gist ? `<p class="gist">${gist}</p>` : ""}
+  </div>`;
+const caseBlock = c => `
+  <div class="case">
+    <h5>${c.title}</h5>
+    <p class="tagline">${c.tagline}</p>
+    <p class="story">${c.story}</p>
+    <ol>${c.questions.map(q=>`<li>${q}</li>`).join("")}</ol>
+    ${c.leaderKey ? `<div class="leaderkey">${c.leaderKey}</div>` : ""}
+    ${c.care ? `<div class="leaderkey" style="background:var(--clay-lite);color:#6E2626"><b>Pastoral care:</b> ${c.care}</div>` : ""}
+  </div>`;
+
+/* ============ build the views ============ */
+const views = $("#views");
+const UNITS = ["Foundations","Formation","Content and Character","Community and Mission"];
+
+/* --- overview --- */
+views.insertAdjacentHTML("beforeend", `
+<section class="view" id="v-overview"><div class="wrap">
+  <h2 class="big">Press Start</h2>
+  <p class="lede">Ten sessions on what video games are doing to our faith — and what our faith has to say back. Twice a month, forty minutes each. Everything you need to teach is on this page.</p>
+
+  <div class="track">
+    <div class="tracknodes">
+      ${SESSIONS.map(s=>`<button class="node" onclick="go('s${s.n}')">
+        <span class="nodenum">${String(s.n).padStart(2,"0")}</span>
+        <span class="nodedot"></span>
+        <span class="nodelabel">${s.title}</span></button>`).join("")}
+    </div>
+    <div class="unitband">
+      <span style="grid-column:span 3">Foundations · what games are</span>
+      <span style="grid-column:span 3">Formation · what they do to us</span>
+      <span style="grid-column:span 2">Content and character</span>
+      <span style="grid-column:span 2">Community and mission</span>
+    </div>
+  </div>
+
+  <h3>The argument of the semester</h3>
+  <p>The series moves in one direction, and each unit depends on the one before it. Unit One establishes that making, playing and building tools are goods rooted in creation — so that the critique which follows is not suspicion dressed up as holiness. Unit Two turns to formation: what a thousand hours a year actually trains, why rest and escape are different things, and how compulsion is engineered rather than accidental. Unit Three narrows to content and character. Unit Four widens back out to other people, and ends with each member writing a rule they can keep.</p>
+
+  <div class="callout brasscall"><p><b>The one thing to protect:</b> this is not a series about quitting. If the group finishes feeling only guilt, it has failed. If it finishes having changed nothing, it has also failed. The target is a group that can name what their play is forming in them and has decided, out loud, what to do about it.</p></div>
+
+  <h3>How the forty minutes are spent</h3>
+  <table class="tbl">
+    <tr><th style="width:80px">Minutes</th><th>Segment</th><th>Purpose</th></tr>
+    <tr><td>0:00–0:05</td><td>Welcome and icebreaker</td><td>Every session opens with an activity tied to that night's idea, not a generic warm-up.</td></tr>
+    <tr><td>0:05–0:08</td><td>Anchor reading and prayer</td><td>The passage is read before it is explained. One observation from the room first.</td></tr>
+    <tr><td>0:08–0:18</td><td>Teaching</td><td>Three points. Slides are provided but optional.</td></tr>
+    <tr><td>0:18–0:30</td><td>Case study</td><td>The centre of the session. Two cases are supplied; use one.</td></tr>
+    <tr><td>0:30–0:36</td><td>Application</td><td>Something written, decided, or assigned. Never merely felt.</td></tr>
+    <tr><td>0:36–0:40</td><td>Close and preview</td><td>Prayer, and a hook into the next session.</td></tr>
+  </table>
+  <p style="margin-top:14px">Session 10 shifts the balance — shorter teaching, ten silent minutes for writing a rule of play, and a closing commission.</p>
+
+  <h3>Start here</h3>
+  <div class="grid2">
+    <div class="card"><h4>New to leading this</h4><p style="font-size:14.5px;margin:0">Read the leader's handbook first — it covers ground rules, timing, what will surface pastorally, and how to cut the series to eight sessions. <a href="#" onclick="go('handbook');return false">Open the handbook</a></p></div>
+    <div class="card"><h4>Preparing tonight's session</h4><p style="font-size:14.5px;margin:0">Open the session, read the plan, skim the leader's key on the case study, and start the timer when people sit down. Twenty minutes of preparation is enough. <a href="#" onclick="go('s1');return false">Go to Session 1</a></p></div>
+  </div>
+</div></section>`);
+
+/* --- sessions --- */
+SESSIONS.forEach(s => {
+  const plan = s.plan.map(p=>`
+    <li><div class="clock">${p.clock}<em>${p.mins} min</em></div>
+      <div><h5>${p.h}</h5><div class="script">${p.script}</div>
+      ${p.bullets && p.bullets.length ? `<ul>${p.bullets.map(b=>`<li>${b}</li>`).join("")}</ul>`:""}</div></li>`).join("");
+
+  views.insertAdjacentHTML("beforeend", `
+  <section class="view" id="v-s${s.n}"><div class="wrap">
+    <div class="shead">
+      <span class="sessnum">${String(s.n).padStart(2,"0")}</span>
+      <div><h2 class="big">${s.title}</h2><p class="lede">${s.subtitle}</p></div>
+    </div>
+    <div class="meta">
+      <span class="chip">${s.unit}</span>
+      <span class="chip t">40 minutes</span>
+      <span class="chip b">${s.anchor.ref}</span>
+      <span class="chip">${s.slides.length} slides</span>
+    </div>
+    <div class="callout"><p><b>Big idea.</b> ${s.bigIdea}</p></div>
+
+    <div class="tabs" data-tabs="s${s.n}">
+      <button class="tab on" data-p="plan">Lesson plan</button>
+      <button class="tab" data-p="slides">Slides</button>
+      <button class="tab" data-p="scripture">Scripture</button>
+      <button class="tab" data-p="cases">Case studies</button>
+      <button class="tab" data-p="disc">Discussion</button>
+      <button class="tab" data-p="home">Take-home</button>
+    </div>
+
+    <div class="pane on" data-p="plan">
+      <h3>Icebreaker · ${s.icebreaker.title}</h3>
+      <p><b>How it runs.</b> ${s.icebreaker.how}</p>
+      <p><b>Why this one.</b> ${s.icebreaker.why}</p>
+      <h3>The forty minutes</h3>
+      <ul class="plan">${plan}</ul>
+      <h3>Teaching notes</h3>
+      ${s.teaching.map(t=>`<h4>${t.h}</h4>${t.body.map(b=>`<p>${b}</p>`).join("")}`).join("")}
+      ${s.n===6 ? `<h3>Monetization glossary</h3><p>Use these for the icebreaker: read the definition, let the group name the term.</p><ul class="reflist">${GLOSSARY.map(g=>`<li><b>${g.t}</b><span>${g.d}</span></li>`).join("")}</ul>`:""}
+      ${s.n===10 ? `<h3>The rule of play worksheet</h3><p>The template is on its own page so you can print it for the group before you arrive. <a href="#" onclick="go('rule');return false">Open the worksheet</a></p>`:""}
+    </div>
+
+    <div class="pane" data-p="slides">
+      <p class="lede" style="font-size:16px">${s.slides.length} slides with speaker notes. Present full screen, use the arrow keys, and press N for notes.</p>
+      <p><button class="btn brass" onclick="present(${s.n},0)">Present from the beginning</button></p>
+      <div class="thumbs">
+        ${s.slides.map((sl,i)=>`<button class="thumb" onclick="present(${s.n},${i})">
+          <span class="tn">${String(i+1).padStart(2,"0")} · ${esc(sl.kicker)}</span>
+          <span class="tt">${sl.h ? esc(sl.h) : "Scripture"}</span>
+          <span class="tb">${esc(sl.notes).slice(0,90)}…</span></button>`).join("")}
+      </div>
+    </div>
+
+    <div class="pane" data-p="scripture">
+      <h3>Anchor passage</h3>
+      ${verseBlock(s.anchor.ref, s.anchor.text, s.anchor.gist)}
+      <h3>Supporting passages</h3>
+      <ul class="reflist">
+        ${s.support.map(v=>`<li><b><a href="${BG(v.ref)}" target="_blank" rel="noopener" style="color:inherit">${v.ref}</a></b><span>${v.gist}</span></li>`).join("")}
+      </ul>
+      <div class="callout"><p>Scripture text on this page is the World English Bible, which is public domain — copy and project it freely. Read the anchor in your congregation's translation before you teach, and read it in its own chapter at least once.</p></div>
+    </div>
+
+    <div class="pane" data-p="cases">
+      <p class="lede" style="font-size:16px">Two cases. Use one; the second is there in case the first doesn't fit your room.</p>
+      ${s.cases.map(caseBlock).join("")}
+      <p><a href="#" onclick="go('cases');return false">Twelve more scenarios in the case bank</a></p>
+    </div>
+
+    <div class="pane" data-p="disc">
+      <h3>Discussion questions</h3>
+      <p>Pick three. More than three in twelve minutes means nobody answers properly.</p>
+      <ol class="qlist">${s.discussion.map(q=>`<li>${q}</li>`).join("")}</ol>
+    </div>
+
+    <div class="pane" data-p="home">
+      <h3>This fortnight</h3>
+      <div class="card" style="margin-bottom:14px"><h4>Challenge</h4><p style="margin:0">${s.takehome.challenge}</p></div>
+      <div class="card" style="margin-bottom:14px"><h4>Practice</h4><p style="margin:0">${s.takehome.practice}</p></div>
+      <div class="card"><h4>Before next time</h4><p style="margin:0">${s.takehome.prep}</p></div>
+    </div>
+  </div></section>`);
+});
+
+/* --- case bank --- */
+views.insertAdjacentHTML("beforeend", `
+<section class="view" id="v-cases"><div class="wrap">
+  <h2 class="big">Case bank</h2>
+  <p class="lede">Twelve additional scenarios, beyond the two attached to each session. Use them when a case doesn't fit your room, when a session runs short, or when something in the group's own life needs a story to talk through at one remove.</p>
+  <div class="callout"><p>All cases in this curriculum are composites written for teaching. None describes a real identifiable person. If a case lands too close to someone in the room, name that risk to yourself before you read it aloud — and if it lands on you mid-session, stop and be a pastor rather than a teacher.</p></div>
+  ${EXTRA_CASES.map(c=>`<div class="case">
+    <h5>${c.title}</h5><p class="tagline">${c.tagline}</p>
+    <p class="story">${c.story}</p>
+    <ol>${c.questions.map(q=>`<li>${q}</li>`).join("")}</ol>
+    ${c.care?`<div class="leaderkey" style="background:var(--clay-lite);color:#6E2626"><b>Pastoral care:</b> ${c.care}</div>`:""}
+  </div>`).join("")}
+</div></section>`);
+
+/* --- resources --- */
+views.insertAdjacentHTML("beforeend", `
+<section class="view" id="v-resources"><div class="wrap">
+  <h2 class="big">Sources</h2>
+  <p class="lede">Everything below is labelled by what it is, so you can weigh it rather than take it. Reference tools carry no argument. Christian authors have their tradition named. Research sources are here for facts, not for theology.</p>
+  <div class="callout warn"><p><b>On the word neutral.</b> There is no theology written from nowhere, and a resource list that claims otherwise is misleading you. What this page does instead is label. Where Christians genuinely disagree — loot boxes and gambling, violent content, what the screen-time research actually shows — the entries say so and point you to both sides.</p></div>
+  ${RESOURCES.map(g=>`
+    <h3>${g.group}</h3>
+    <p>${g.note}</p>
+    <div class="res">
+      ${g.items.map(i=>`<div class="resitem">
+        <div class="rt">${i.t}<span class="lean ${i.lean}">${i.leanLabel}</span></div>
+        <div class="rw">${i.w}</div>
+        <p class="rd">${i.d}</p></div>`).join("")}
+    </div>`).join("")}
+  <h3>Using a source honestly</h3>
+  <p>Three habits worth keeping across the semester. Check a quotation against its own source rather than a quotation site, because attributions circulate faster than they are verified. Say how old a statistic is when you use it, since this field moves quickly and a figure from 2016 describes a different industry. And when you cite research that supports your point, know what the strongest study against it found — if you don't, the first group member who looks it up will discount everything else you said that night.</p>
+</div></section>`);
+
+/* --- handbook --- */
+views.insertAdjacentHTML("beforeend", `
+<section class="view" id="v-handbook"><div class="wrap">
+  <h2 class="big">Leader's handbook</h2>
+  <p class="lede">Read this once before Session 1. It takes about six minutes and covers the things that go wrong.</p>
+  ${[["The shape of the series",HANDBOOK.shape],["Running a session",HANDBOOK.running],["Pastoral care",HANDBOOK.care],["Sources and honesty",HANDBOOK.sourcing]]
+    .map(([h,arr])=>`<h3>${h}</h3>${arr.map(x=>`<h4>${x.h}</h4><p>${x.p}</p>`).join("")}`).join("")}
+  <h3>Anchor passages at a glance</h3>
+  <table class="tbl">
+    <tr><th style="width:36px"></th><th>Session</th><th>Anchor</th></tr>
+    ${SESSIONS.map(s=>`<tr><td>${String(s.n).padStart(2,"0")}</td><td><a href="#" onclick="go('s${s.n}');return false">${s.title}</a></td><td>${s.anchor.ref}</td></tr>`).join("")}
+  </table>
+</div></section>`);
+
+/* --- rule of play --- */
+views.insertAdjacentHTML("beforeend", `
+<section class="view" id="v-rule"><div class="wrap">
+  <h2 class="big">Rule of play</h2>
+  <p class="lede">The closing exercise of Session 10. Print one per person. Ten minutes of silence is the right amount of time — long enough that people stop writing what sounds good and start writing what is true.</p>
+  <div class="callout"><p><b>Tell them three things before they start.</b> Specific beats aspirational. Small beats impressive. Keepable beats either. A rule that says “play less” is not a rule; a rule that says “nothing after 10:30 on a work night” is.</p></div>
+  <div class="ws">
+    <h4 style="margin-top:0">My rule of play</h4>
+    <p style="font-size:13.5px;color:var(--ink-faint)">Written on ______________________ · to be reviewed on ______________________ with ______________________</p>
+    ${[["What I play","And what I've decided not to play, and why."],
+       ["When I play","Actual times or days, not a feeling."],
+       ["How much","A number you would be willing to be asked about."],
+       ["With whom","Who I play with, and who I've stopped playing with."],
+       ["What I spend","A monthly figure decided in daylight. It does not have to be zero."],
+       ["Why I play","The hardest line. Most people need help with this one."]]
+      .map(([h,sub])=>`<h4>${h}</h4><p style="font-size:13.5px;color:var(--ink-faint);margin:0 0 4px">${sub}</p><div class="wsline"></div><div class="wsline"></div>`).join("")}
+    <h4>One sentence I would want said about how I play</h4>
+    <div class="wsline"></div><div class="wsline"></div>
+  </div>
+  <p><button class="btn primary" onclick="window.print()">Print this worksheet</button></p>
+  <h3>Two weeks of daily prompts</h3>
+  <p>Optional, for groups that want something between meetings. One question a day, answered in a sentence.</p>
+  <ol class="qlist">
+    ${["What did I play today, and did I choose the start?",
+       "What did playing today make me want afterwards?",
+       "Who did I speak to today, and how did I speak to them?",
+       "Did anything I did today form me toward patience or away from it?",
+       "What did I spend, and had I decided it in advance?",
+       "Did I rest today, or did I only stop?",
+       "What did I set before my eyes today that I would not want set before a child's?",
+       "Who noticed me today, and who did I notice?",
+       "Was there a moment today when I was kinder than I had to be?",
+       "What did I avoid today by playing?",
+       "What did I enjoy today that was genuinely good? Name it without qualifying it.",
+       "Who am I becoming, on the evidence of this fortnight?",
+       "What one thing from this rule have I already broken, and why that one?",
+       "What would I tell someone starting this series next semester?"]
+      .map(q=>`<li>${q}</li>`).join("")}
+  </ol>
+</div></section>`);
+
+/* --- search --- */
+views.insertAdjacentHTML("beforeend", `<section class="view" id="v-search"><div class="wrap">
+  <h2 class="big">Search</h2><div id="hits"></div></div></section>`);
+
+/* ============ navigation ============ */
+const NAV = [
+  {k:"group", label:"Start"},
+  {k:"overview", label:"Overview"},
+  {k:"handbook", label:"Leader's handbook"},
+  {k:"group", label:"Sessions"},
+  ...SESSIONS.map(s=>({k:"s"+s.n, label:s.title, num:String(s.n).padStart(2,"0")})),
+  {k:"group", label:"Materials"},
+  {k:"cases", label:"Case bank"},
+  {k:"resources", label:"Sources"},
+  {k:"rule", label:"Rule of play"}
+];
+$("#navlist").innerHTML = NAV.map(n =>
+  n.k==="group" ? `<div class="navgroup">${n.label}</div>`
+  : `<a class="navitem" href="#${n.k}" data-k="${n.k}"><span class="navnum">${n.num||""}</span><span>${n.label}</span></a>`
+).join("");
+
+function go(k){
+  document.querySelectorAll("section.view").forEach(v=>v.classList.remove("on"));
+  const v = $("#v-"+k); if(!v) return;
+  v.classList.add("on");
+  document.querySelectorAll(".navitem").forEach(a=>a.classList.toggle("on", a.dataset.k===k));
+  const s = SESSIONS.find(x=>"s"+x.n===k);
+  $("#crumb").textContent = s ? `Session ${s.n} · ${s.title}` : (NAV.find(n=>n.k===k)||{}).label || "Search";
+  $("#presentBtn").style.display = s ? "" : "none";
+  if(s) $("#presentBtn").onclick = ()=>present(s.n,0);
+  buildTimer(s);
+  if(location.hash.slice(1)!==k) history.replaceState(null,"","#"+k);
+  window.scrollTo(0,0);
+}
+window.go = go;
+window.addEventListener("hashchange",()=>go(location.hash.slice(1)||"overview"));
+
+/* tabs */
+document.addEventListener("click", e=>{
+  const t = e.target.closest(".tab"); if(!t) return;
+  const box = t.closest(".view");
+  box.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on", x===t));
+  box.querySelectorAll(".pane").forEach(p=>p.classList.toggle("on", p.dataset.p===t.dataset.p));
+});
+
+/* ============ search ============ */
+const INDEX = [];
+SESSIONS.forEach(s=>{
+  INDEX.push({k:"s"+s.n, t:`Session ${s.n}: ${s.title}`, sub:s.subtitle, blob:[s.title,s.subtitle,s.bigIdea,s.anchor.ref,s.anchor.text,
+    ...s.support.map(v=>v.ref+" "+v.gist), ...s.teaching.flatMap(x=>[x.h,...x.body]),
+    ...s.cases.flatMap(c=>[c.title,c.story]), ...s.discussion, s.icebreaker.title, s.icebreaker.how].join(" ").toLowerCase()});
+});
+EXTRA_CASES.forEach(c=>INDEX.push({k:"cases", t:c.title, sub:"Case bank · "+c.tagline, blob:(c.title+" "+c.story).toLowerCase()}));
+RESOURCES.forEach(g=>g.items.forEach(i=>INDEX.push({k:"resources", t:i.t, sub:"Sources · "+i.w, blob:(i.t+" "+i.w+" "+i.d).toLowerCase()})));
+GLOSSARY.forEach(g=>INDEX.push({k:"s6", t:g.t, sub:"Glossary · Session 6", blob:(g.t+" "+g.d).toLowerCase()}));
+
+$("#q").addEventListener("input", e=>{
+  const term = e.target.value.trim().toLowerCase();
+  document.querySelectorAll(".navitem").forEach(a=>a.classList.remove("hide"));
+  if(term.length < 2){ if($("#v-search").classList.contains("on")) go("overview"); return; }
+  const hits = INDEX.filter(x=>x.blob.includes(term)).slice(0,24);
+  $("#hits").innerHTML = hits.length
+    ? hits.map(h=>`<a class="searchhit" href="#" onclick="go('${h.k}');return false"><b>${esc(h.t)}</b><span>${esc(h.sub)}</span></a>`).join("")
+    : `<p class="lede">Nothing matched “${esc(e.target.value)}”. Try a book of the Bible, a session title, or a term like “loot box” or “sabbath”.</p>`;
+  go("search");
+  $("#q").focus();
+});
+
+/* ============ slide presenter ============ */
+let curDeck = [], curIdx = 0, curSess = null;
+function present(n, i){
+  curSess = SESSIONS.find(s=>s.n===n); curDeck = curSess.slides; curIdx = i;
+  $("#stage").classList.add("on"); drawSlide();
+}
+function drawSlide(){
+  const s = curDeck[curIdx];
+  $("#slideBody").innerHTML = `<div class="kicker">${esc(s.kicker)}</div>${s.h?`<h1>${esc(s.h)}</h1>`:""}${s.body}`;
+  $("#pnotes").innerHTML = `<b>Speaker notes.</b> ${esc(s.notes)}`;
+  $("#sCount").textContent = `${curIdx+1} / ${curDeck.length}`;
+  $("#dots").innerHTML = curDeck.map((_,i)=>`<button class="dot ${i===curIdx?"on":""}" aria-label="Slide ${i+1}" onclick="jump(${i})"></button>`).join("");
+}
+window.jump = i => { curIdx = i; drawSlide(); };
+const move = d => { curIdx = Math.max(0, Math.min(curDeck.length-1, curIdx+d)); drawSlide(); };
+$("#sNext").onclick = ()=>move(1);
+$("#sPrev").onclick = ()=>move(-1);
+$("#sExit").onclick = ()=>$("#stage").classList.remove("on");
+$("#sNotes").onclick = ()=>$("#pnotes").classList.toggle("on");
+document.addEventListener("keydown", e=>{
+  if(!$("#stage").classList.contains("on")) return;
+  if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){e.preventDefault();move(1);}
+  if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();move(-1);}
+  if(e.key==="Escape") $("#stage").classList.remove("on");
+  if(e.key==="n"||e.key==="N") $("#pnotes").classList.toggle("on");
+});
+let tx=null;
+$("#stage").addEventListener("touchstart",e=>tx=e.changedTouches[0].clientX,{passive:true});
+$("#stage").addEventListener("touchend",e=>{
+  if(tx===null) return; const dx=e.changedTouches[0].clientX-tx;
+  if(Math.abs(dx)>55) move(dx<0?1:-1); tx=null;
+},{passive:true});
+
+/* ============ session timer ============ */
+let segs=[], segI=0, left=0, tick=null, running=false;
+function buildTimer(s){
+  segs = s ? s.plan.map(p=>({h:p.h, sec:p.mins*60})) : [];
+  segI=0; running=false; clearInterval(tick);
+  left = segs.length ? segs[0].sec : 2400;
+  paint(); $("#tGo").textContent="Start";
+  $("#tNow").textContent = segs.length ? "Ready" : "Open a session to run the plan";
+  $("#tNext").textContent = segs.length ? "First up: "+segs[0].h : "";
+}
+function paint(){
+  const m=Math.floor(left/60), sec=left%60;
+  $("#tCd").textContent = `${m}:${String(sec).padStart(2,"0")}`;
+  const tot = segs[segI] ? segs[segI].sec : 1;
+  $("#tBar").style.width = (100 - (left/tot*100)) + "%";
+}
+function advance(){
+  segI++;
+  if(segI >= segs.length){
+    running=false; clearInterval(tick);
+    $("#tNow").textContent="Session complete"; $("#tNext").textContent="Well done."; $("#tCd").textContent="0:00";
+    $("#tGo").textContent="Start"; return;
+  }
+  left = segs[segI].sec;
+  $("#tNow").textContent = segs[segI].h;
+  $("#tNext").textContent = segs[segI+1] ? "Next: "+segs[segI+1].h : "Last segment";
+  paint();
+}
+$("#tGo").onclick = ()=>{
+  if(!segs.length) return;
+  running = !running;
+  $("#tGo").textContent = running ? "Pause" : "Resume";
+  if(running){
+    if($("#tNow").textContent==="Ready"||$("#tNow").textContent==="Session complete"){
+      segI=0; left=segs[0].sec;
+      $("#tNow").textContent=segs[0].h;
+      $("#tNext").textContent=segs[1]?"Next: "+segs[1].h:"";
+    }
+    tick = setInterval(()=>{ left--; if(left<=0) advance(); else paint(); },1000);
+  } else clearInterval(tick);
+};
+$("#tSkip").onclick = ()=>{ if(segs.length) advance(); };
+$("#tReset").onclick = ()=>{ const s=SESSIONS.find(x=>"s"+x.n===(location.hash.slice(1))); buildTimer(s); };
+$("#timerBtn").onclick = ()=>$("#timerbox").classList.toggle("on");
+
+/* ============ boot ============ */
+go(location.hash.slice(1) || "overview");
+</script>
+</body>
+</html>
