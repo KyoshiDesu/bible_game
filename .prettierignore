@@ -7,3 +7,6 @@ package-lock.json
 press-start-curriculum.html
 docs/
 .env*
+
+# Vendored agent skills — keep them byte-identical to upstream.
+.agents/

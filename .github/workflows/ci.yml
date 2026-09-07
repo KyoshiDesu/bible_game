@@ -41,6 +41,11 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
+      # Runs ahead of the full suite so a dropped session or an unmapped field
+      # reads as a content failure rather than a generic test failure.
+      - name: Validate curriculum content
+        run: npm run content:check
+
       - name: Unit tests
         run: npm run test
 
