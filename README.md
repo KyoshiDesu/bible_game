@@ -12,12 +12,13 @@ Plan: [`docs/superpowers/plans/2026-09-07-press-start-web-app-plan.md`](docs/sup
 
 ## Status
 
-**Phase 2 — prep surface.** The leader's site is complete and static: the
-overview, ten sessions across six panes each, the handbook, the case bank,
-sources, and the printable rule-of-play worksheet, with client-side search over
-the whole curriculum. Seventy pages, no auth and no database — phase 3 adds
-identity and groups, and phase 6 adds the presenter view that projects the
-slides this surface only lays out.
+**Phase 3 — identity, groups, and joining.** On top of the static prep surface:
+leaders sign in by magic link and run groups; participants join with a
+six-character code and a display name and nothing else. Schema, row-level
+security, and the join flow are in `supabase/migrations/`, guarded by a suite
+that authenticates as real users and asserts what they cannot reach. Phase 4
+adds the workbook; phase 6 adds the presenter view that projects the slides
+this surface only lays out.
 
 ## Getting started
 
@@ -25,37 +26,54 @@ Requires Node 22.
 
 ```bash
 npm install
-cp .env.example .env         # fill in the two NEXT_PUBLIC_SUPABASE_ values
 npm run dev
 ```
 
-Then <http://localhost:3000>.
-
-The application renders without a Supabase project — the prep surface is
-static, and the middleware skips session refresh when the variables are
-absent. Anything that actually reads or writes throws instead, naming the
+Then <http://localhost:3000>. The curriculum needs nothing else: the prep
+surface is static, the middleware skips session refresh when Supabase is not
+configured, and anything that reads or writes throws instead, naming the
 variable it wanted.
+
+For anything with an account behind it — groups, joining, the workbook — run the
+database too. It needs Docker.
+
+```bash
+npx supabase start
+{ echo "NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000"; npm run --silent supabase:env; } > .env.local
+npm run test:rls            # the policies, against a real database
+```
+
+`.env.local` takes precedence over `.env`, so development points at the local
+stack; delete it to go back to a hosted project. No key is written into this
+repository — `supabase:env` asks the CLI for them, and the test suites do the
+same when the environment does not already say. Magic links do not leave the
+machine: read them at <http://127.0.0.1:54324>.
 
 ## Scripts
 
-| Command                 | What it does                                  |
-| ----------------------- | --------------------------------------------- |
-| `npm run dev`           | Development server                            |
-| `npm run build`         | Production build                              |
-| `npm run typecheck`     | `tsc --noEmit`                                |
-| `npm run lint`          | ESLint                                        |
-| `npm run content:check` | Validates `content/` against its schemas      |
-| `npm run format`        | Prettier, writing in place                    |
-| `npm run test`          | Vitest, once                                  |
-| `npm run test:watch`    | Vitest, watching                              |
-| `npm run test:e2e`      | Playwright (builds and serves the app itself) |
+| Command                     | What it does                                        |
+| --------------------------- | --------------------------------------------------- |
+| `npm run dev`               | Development server                                  |
+| `npm run build`             | Production build                                    |
+| `npm run typecheck`         | `tsc --noEmit`                                      |
+| `npm run lint`              | ESLint                                              |
+| `npm run content:check`     | Validates `content/` against its schemas            |
+| `npm run format`            | Prettier, writing in place                          |
+| `npm run test`              | Vitest, once                                        |
+| `npm run test:watch`        | Vitest, watching                                    |
+| `npm run test:rls`          | Row-level security, against local Supabase          |
+| `npm run test:e2e`          | Playwright (builds and serves the app itself)       |
+| `npm run test:e2e:identity` | Signing in and joining, against local Supabase      |
+| `npm run supabase:env`      | Prints the local stack's settings, for `.env.local` |
 
 Playwright needs its browser once: `npx playwright install chromium`.
 
 CI runs typecheck, lint, format check, content validation, unit tests, and
-build on every pull request, with end-to-end tests in a second job. The
-end-to-end suite includes a content-parity check that asserts every field of
-every session reaches the DOM, and an axe pass over one page of each kind.
+build on every pull request; end-to-end tests in a second job; and the
+row-level-security suite and the joining tests in a third, against a Supabase
+that job starts itself. The end-to-end suite includes a content-parity check
+that asserts every field of every session reaches the DOM, and an axe pass over
+one page of each kind.
 
 ## Layout
 
@@ -66,13 +84,18 @@ app/
   (prep)/            the leader's surface: overview, sessions, handbook, materials
     sessions/[number]/  a route per pane, so a pane can be linked to
   search-index.json/ the search index, prerendered to a static file
+  (play)/            the participant's surface: joining, and their own page
+  auth/confirm/      where a magic link lands
 content/             the curriculum as typed data — no React, no formatting
   schema.ts          Zod schemas and the types every surface renders against
   sessions/          one module per session, plus the ordered index
 components/prep/     the prep surface's own components
 components/ui/       shadcn/ui components
-lib/supabase/        client factories: browser, server, and session refresh
+lib/supabase/        client factories: browser, server, admin, session refresh
+lib/db/              typed data access, one module per aggregate
+lib/actions/         server actions; typed results, never thrown errors
 lib/                 typed logic; no React, no SQL at the call site
+supabase/            migrations, local config, and the email templates
 middleware.ts        refreshes the auth token on every rendering request
 tests/               unit tests that are not colocated with a module
 e2e/                 Playwright specs
@@ -81,6 +104,18 @@ docs/                design and plan
 
 The presenter (`app/(present)`) and participant (`app/(play)`) route groups
 arrive in phases 6 and 3.
+
+## Hosted projects
+
+Three settings do not travel in `supabase/config.toml` and have to be set in the
+dashboard of each hosted project:
+
+- **Anonymous sign-ins on.** The whole participant flow is anonymous users.
+- **The two email templates** under Authentication → Emails, matching
+  `supabase/templates/`. The stock templates link to Supabase's own verify
+  endpoint, which returns tokens in a URL fragment the server never sees.
+- **The anonymous sign-in rate limit raised.** The default is 30 per hour per
+  IP address, and a group joins from one church wifi address in two minutes.
 
 ## The source file
 
@@ -128,6 +163,28 @@ in the history of this repository if it is ever needed again.
 - Scripture references are stored bare, and the lookup URL is computed at
   render by `lib/bible-gateway.ts`. The reference stays readable, stays
   searchable, and is not tied to one Bible site.
+- Row-level security is on for every table and denies by default, so a table
+  with no matching policy is unreadable rather than public. Four conventions
+  hold it together, and each is there because the obvious alternative fails
+  quietly:
+  - Write `(select auth.uid())`, never bare `auth.uid()`. Postgres evaluates
+    the bare call once per row.
+  - Never write `auth.role() = 'authenticated'`. Anonymous participants carry
+    the `authenticated` role exactly like a signed-in leader, so that test
+    passes for everyone. Name an owner or a membership; use
+    `private.is_identified()` when a leader is genuinely required.
+  - Helpers that a policy needs live in the `private` schema, which is not
+    exposed through the Data API. A policy may call them; the role holding the
+    session may not.
+  - A `GRANT` is a separate gate from a policy. Without one, PostgREST refuses
+    a request before any policy is consulted.
+- `insert ... returning` runs the SELECT policy against the new row, and
+  Postgres reports the refusal as a `WITH CHECK` violation. If an insert fails
+  for no reason you can see, check whether the writer can read what they wrote.
+- Route handlers that sign someone in must write cookies onto the response they
+  return, not through the request-scoped store, and must redirect with a
+  relative path — `request.nextUrl` reports the canonical host rather than the
+  one the browser used, and a cookie set for one host is not sent to the other.
 - Never create a Supabase client at module scope on the server. It carries the
   caller's session, and a shared one would carry it between people.
 - Prettier owns formatting, ESLint owns everything else, and `docs/` and

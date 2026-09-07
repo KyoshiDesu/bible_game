@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "supabase:env": "supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name auth.publishable_key=NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY --override-name auth.secret_key=SUPABASE_SECRET_KEY --override-name db.url=SUPABASE_DB_URL | grep -E '^(NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY|SUPABASE_SECRET_KEY|SUPABASE_DB_URL)='",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "content:check": "vitest run tests/content.test.ts",
@@ -13,7 +14,9 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
+    "test:rls": "vitest run --config vitest.rls.config.ts",
+    "test:e2e": "playwright test --project=content --project=chromium --project=mobile",
+    "test:e2e:identity": "playwright test --project=identity",
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
@@ -27,6 +30,7 @@
     "radix-ui": "^1.6.7",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "server-only": "^0.0.1",
     "tw-animate-css": "^1.4.0",
     "zod": "^4.5.4"
   },
@@ -48,6 +52,7 @@
     "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.9",
     "shadcn": "^4.21.0",
+    "supabase": "^2.117.0",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^2.1.8"

@@ -4,6 +4,9 @@ const PORT = Number(process.env.PORT ?? 3000);
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORT}`;
 
 const CONTENT_SPEC = /prep-content\.spec\.ts/;
+// Needs a local Supabase (`npx supabase start`), so it runs under its own
+// project and its own script rather than failing the default suite.
+const IDENTITY_SPEC = /identity\.spec\.ts/;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -21,14 +24,19 @@ export default defineConfig({
     // rather than once per browser.
     { name: "content", testMatch: CONTENT_SPEC },
     {
+      name: "identity",
+      testMatch: IDENTITY_SPEC,
+      use: { ...devices["Desktop Chrome"] },
+    },
+    {
       name: "chromium",
-      testIgnore: CONTENT_SPEC,
+      testIgnore: [CONTENT_SPEC, IDENTITY_SPEC],
       use: { ...devices["Desktop Chrome"] },
     },
     // Participants are on phones; the room view is tested where it is used.
     {
       name: "mobile",
-      testIgnore: CONTENT_SPEC,
+      testIgnore: [CONTENT_SPEC, IDENTITY_SPEC],
       use: { ...devices["Pixel 7"] },
     },
   ],

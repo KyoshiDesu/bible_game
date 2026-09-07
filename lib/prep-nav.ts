@@ -57,6 +57,13 @@ export const navGroups: NavGroup[] = [
       { href: "/rule-of-play", label: "Rule of play" },
     ],
   },
+  {
+    label: "Leading",
+    items: [
+      { href: "/groups", label: "My groups" },
+      { href: "/join", label: "Join a group" },
+    ],
+  },
 ];
 
 /** True when `href` is the page currently shown, or an ancestor of it. */
