@@ -66,7 +66,6 @@ content/        the curriculum as typed data — no React, no formatting
 components/ui/  shadcn/ui components
 lib/supabase/   client factories: browser, server, and session refresh
 lib/            typed logic; no React, no SQL at the call site
-scripts/        one-off migrations, deleted once their output is committed
 middleware.ts   refreshes the auth token on every rendering request
 tests/          unit tests that are not colocated with a module
 e2e/            Playwright specs
@@ -83,9 +82,10 @@ tested against, so `tests/design-tokens.test.ts` fails if the palette in
 `app/globals.css` drifts from it; and it is the record the extraction can be
 re-derived from.
 
-`content/` is the source of truth from here on. Edit those modules directly —
-`scripts/extract-content.ts` was a migration, and it is deleted once its
-output is committed.
+`content/` is the source of truth from here on. Edit those modules directly.
+The extraction was a one-time migration, not a build step, so
+`scripts/extract-content.ts` was deleted once its output was committed; it is
+in the history of this repository if it is ever needed again.
 
 ## Conventions
 
