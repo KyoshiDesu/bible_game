@@ -5,4 +5,6 @@ export { caseBank } from "./case-bank";
 export { glossary } from "./glossary";
 export { handbook } from "./handbook";
 export { ruleOfPlay } from "./rule-of-play";
+export { overview } from "./overview";
+export { pages } from "./pages";
 export { units } from "./units";

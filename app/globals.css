@@ -39,6 +39,34 @@
   --on-violet: #fbf7ee;
   --on-violet-soft: #cfc6e4;
   --on-violet-faint: #7a709e;
+  --on-violet-dim: #9a90bc;
+  --on-violet-muted: #a79eca;
+  --on-violet-warm: #ede6d6;
+
+  /* Second tones taken from the original's one-off values, so that a component
+     never has to name a colour of its own. */
+  /*
+   * Legible siblings for small text.
+   *
+   * --ink-faint, --brass, and --on-violet-faint are the ported palette and are
+   * left exactly as authored; they remain the graphic colours — rules, borders,
+   * the focus ring, the semester-track gradient — where the 3:1 threshold for
+   * non-text contrast applies and they pass. As *text* at the sizes this
+   * curriculum sets small print, none of them reaches the 4.5:1 that WCAG AA
+   * asks for, so text uses these instead. Measured against --page unless noted.
+   */
+  --ink-faint-legible: #6f6889; /* 4.58:1 */
+  --brass-legible: #8f6425; /* 4.58:1 */
+  --brass-on-violet: #b58a4b; /* 5.72:1 on --violet-deep */
+  --on-violet-faint-legible: #958db1; /* 5.74:1 on --violet-deep */
+
+  --vellum-rule: #e2d9c4;
+  --brass-rule: #ddcba6;
+  --brass-ink: #5e4413;
+  --brass-ink-soft: #7b5518;
+  --brass-ink-strong: #3f2c08;
+  --teal-rule: #b9d8d4;
+  --clay-ink: #6e2626;
 
   --shadow-press:
     0 1px 0 rgba(34, 26, 56, 0.06), 0 8px 24px -18px rgba(34, 26, 56, 0.5);
@@ -103,6 +131,20 @@
   --color-on-violet: var(--on-violet);
   --color-on-violet-soft: var(--on-violet-soft);
   --color-on-violet-faint: var(--on-violet-faint);
+  --color-on-violet-dim: var(--on-violet-dim);
+  --color-on-violet-muted: var(--on-violet-muted);
+  --color-on-violet-warm: var(--on-violet-warm);
+  --color-ink-faint-legible: var(--ink-faint-legible);
+  --color-brass-legible: var(--brass-legible);
+  --color-brass-on-violet: var(--brass-on-violet);
+  --color-on-violet-faint-legible: var(--on-violet-faint-legible);
+  --color-vellum-rule: var(--vellum-rule);
+  --color-brass-rule: var(--brass-rule);
+  --color-brass-ink: var(--brass-ink);
+  --color-brass-ink-soft: var(--brass-ink-soft);
+  --color-brass-ink-strong: var(--brass-ink-strong);
+  --color-teal-rule: var(--teal-rule);
+  --color-clay-ink: var(--clay-ink);
 
   --shadow-press: var(--shadow-press);
 
@@ -177,8 +219,10 @@
     font-optical-sizing: auto;
   }
 
+  /* Underlined, not merely coloured: colour alone does not distinguish a link
+     inside a block of text. Navigation opts out with `no-underline`. */
   a {
-    @apply text-teal;
+    @apply text-teal underline underline-offset-2;
   }
 
   /* The original's focus ring, kept exactly: leaders and participants both
@@ -198,5 +242,28 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+}
+
+/*
+ * Print. The worksheet and the session plan are handed out on paper, so the
+ * printed page is a real output rather than a courtesy: the rail, the topbar,
+ * and the tab strip come off, and cards, cases and verses are kept whole
+ * across a page break.
+ */
+@media print {
+  html {
+    font-size: 11.5pt;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    color: var(--ink-faint);
+    word-break: break-all;
   }
 }
