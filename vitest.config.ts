@@ -18,6 +18,9 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     include: ["**/*.test.{ts,tsx}"],
-    exclude: ["node_modules/**", ".next/**", "e2e/**"],
+    // The row-level-security suite needs a running local Supabase, so it has
+    // its own config and its own script rather than failing `npm test` on a
+    // machine that has not started one.
+    exclude: ["node_modules/**", ".next/**", "e2e/**", "tests/rls/**"],
   },
 });

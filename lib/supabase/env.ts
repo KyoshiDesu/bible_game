@@ -40,6 +40,22 @@ export interface SupabaseEnv {
   publishableKey: string;
 }
 
+/**
+ * The secret key. Server-only: it bypasses row-level security entirely, so a
+ * module that reads it must never be reachable from a client component.
+ */
+export function supabaseSecretKey(): string {
+  return required("SUPABASE_SECRET_KEY", process.env.SUPABASE_SECRET_KEY);
+}
+
+/** The origin this deployment is browsed at, for magic-link redirects. */
+export function siteUrl(): string {
+  return (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(
+    /\/$/,
+    "",
+  );
+}
+
 export function supabaseEnv(): SupabaseEnv {
   return {
     url: required("NEXT_PUBLIC_SUPABASE_URL", URL_VALUE),

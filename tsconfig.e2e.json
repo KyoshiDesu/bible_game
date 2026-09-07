@@ -4,6 +4,6 @@
     "types": ["node"],
     "noEmit": true
   },
-  "include": ["e2e/**/*.ts", "playwright.config.ts"],
+  "include": ["e2e/**/*.ts", "playwright.config.ts", "tests/local-supabase.ts"],
   "exclude": ["node_modules"]
 }

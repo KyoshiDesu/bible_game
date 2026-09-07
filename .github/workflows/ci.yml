@@ -82,3 +82,60 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  identity:
+    name: Identity, groups, and joining
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3000
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start Supabase
+        run: npx supabase start
+
+      # Asked for rather than written down. The local keys are derived from the
+      # JWT secret in supabase/config.toml and reach nothing but the container
+      # this job just started, but a repository is no place for a string shaped
+      # like a service-role key.
+      - name: Export local Supabase settings
+        run: |
+          npx supabase status -o env \
+            --override-name api.url=NEXT_PUBLIC_SUPABASE_URL \
+            --override-name auth.publishable_key=NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY \
+            --override-name auth.secret_key=SUPABASE_SECRET_KEY \
+            | grep -E '^(NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY|SUPABASE_SECRET_KEY)=' \
+            | tr -d '"' >> "$GITHUB_ENV"
+
+      # Security claims, run against a real database over HTTP so that a missing
+      # GRANT and a missing policy both fail here rather than in production.
+      - name: Row-level security suite
+        run: npm run test:rls
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Joining, end to end
+        run: npm run test:e2e:identity
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-identity
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Supabase logs
+        if: failure()
+        run: npx supabase status && docker ps -a
