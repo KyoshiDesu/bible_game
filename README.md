@@ -1,0 +1,78 @@
+# Press Start
+
+_A Semester on Video Games and Faith_ — the curriculum, as an application.
+
+Three surfaces share one set of content: a **prep** site the leader reads
+during the week, a **presenter** view that drives the projector during the
+meeting, and a **participant** view on a phone for voting and the private
+workbook.
+
+Design: [`docs/superpowers/specs/2026-09-07-press-start-web-app-design.md`](docs/superpowers/specs/2026-09-07-press-start-web-app-design.md)
+Plan: [`docs/superpowers/plans/2026-09-07-press-start-web-app-plan.md`](docs/superpowers/plans/2026-09-07-press-start-web-app-plan.md)
+
+## Status
+
+**Phase 0 — foundation.** Scaffold, design tokens, and the test and CI
+harness. There is no curriculum content and no backend yet; the home page is a
+specimen of the ported palette and type, and phase 2 replaces it.
+
+## Getting started
+
+Requires Node 22.
+
+```bash
+npm install
+cp .env.example .env.local   # nothing in it is needed until phase 3
+npm run dev
+```
+
+Then <http://localhost:3000>.
+
+## Scripts
+
+| Command              | What it does                                  |
+| -------------------- | --------------------------------------------- |
+| `npm run dev`        | Development server                            |
+| `npm run build`      | Production build                              |
+| `npm run typecheck`  | `tsc --noEmit`                                |
+| `npm run lint`       | ESLint                                        |
+| `npm run format`     | Prettier, writing in place                    |
+| `npm run test`       | Vitest, once                                  |
+| `npm run test:watch` | Vitest, watching                              |
+| `npm run test:e2e`   | Playwright (builds and serves the app itself) |
+
+Playwright needs its browser once: `npx playwright install chromium`.
+
+CI runs typecheck, lint, format check, unit tests, and build on every pull
+request, with end-to-end tests in a second job.
+
+## Layout
+
+```
+app/            routes; route groups per surface arrive in phases 2 and 6
+  globals.css   the design tokens — the palette lives here, not in components
+  fonts.ts      Fraunces, Karla, IBM Plex Mono via next/font
+components/ui/  shadcn/ui components
+lib/            typed logic; no React, no SQL at the call site
+tests/          unit tests that are not colocated with a module
+e2e/            Playwright specs
+docs/           design and plan
+```
+
+## The source file
+
+`press-start-curriculum.html` is the original single-file curriculum. It is
+still the source of truth for content until phase 1 extracts it, and it is the
+reference the design tokens are tested against — `tests/design-tokens.test.ts`
+fails if the palette in `app/globals.css` drifts from the one in that file.
+
+## Conventions
+
+- TypeScript is strict, with `noUncheckedIndexedAccess`. An index access is
+  possibly-undefined and the code has to say what it does about that.
+- Colour, type, and shadow come from tokens in `app/globals.css`. A hex code in
+  a component is a bug.
+- Dark mode is deliberately not implemented. The curriculum has one palette;
+  the presenter view gets its dark surfaces from the violet tokens.
+- Prettier owns formatting, ESLint owns everything else, and `docs/` is left
+  alone by both.
