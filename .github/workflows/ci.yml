@@ -84,7 +84,7 @@ jobs:
           retention-days: 7
 
   identity:
-    name: Identity, groups, and joining
+    name: Row-level security and the live room
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -126,7 +126,7 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Joining and the workbook, end to end
+      - name: Joining, the workbook, and the room, end to end
         run: npm run test:e2e:supabase
 
       - uses: actions/upload-artifact@v4

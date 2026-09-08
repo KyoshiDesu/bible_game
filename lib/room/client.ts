@@ -18,6 +18,20 @@ export interface BeatResult {
   decidedByLeader: boolean;
 }
 
+/**
+ * A vote that closed level.
+ *
+ * It travels with the state that caused it rather than being re-derived, so a
+ * phone and the projector cannot disagree about what the room tied on. There
+ * is no `beat_results` row yet: the beat is not resolved until the leader
+ * resolves it, which is the point.
+ */
+export interface Tie {
+  /** The choices the room was level on. The leader picks among these. */
+  tied: string[];
+  tally: Tally;
+}
+
 /** Everything a screen needs to render itself from scratch. */
 export interface RoomState {
   runId: string;
@@ -26,6 +40,8 @@ export interface RoomState {
   currentBeat: number;
   /** Every beat resolved so far, oldest first. */
   results: BeatResult[];
+  /** Set only while `state` is "tied". */
+  tie: Tie | null;
 }
 
 export type RoomResult =
@@ -36,6 +52,17 @@ export type VoteResult = { ok: true } | { ok: false; reason: string };
 export type Unsubscribe = () => void;
 
 /**
+ * Whether a screen is still hearing about changes.
+ *
+ * This is a rendered fact, not a diagnostic. A projector that has quietly
+ * stopped receiving updates looks exactly like one that is up to date, and the
+ * room believes it — so `lost` puts a banner on the screen and tells the leader
+ * to refresh, which still works because every surface renders from the
+ * database on load.
+ */
+export type Connection = "connecting" | "live" | "lost";
+
+/**
  * What a participant's phone needs. Read state, watch for changes, vote.
  *
  * There is no way to read anyone else's vote, and no way to report a count:
@@ -44,7 +71,11 @@ export type Unsubscribe = () => void;
  */
 export interface RoomClient {
   getState(runId: string): Promise<RoomState>;
-  subscribe(runId: string, onChange: (state: RoomState) => void): Unsubscribe;
+  subscribe(
+    runId: string,
+    onChange: (state: RoomState) => void,
+    onConnection?: (connection: Connection) => void,
+  ): Unsubscribe;
   vote(runId: string, beatIndex: number, choice: string): Promise<VoteResult>;
 }
 

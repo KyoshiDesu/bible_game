@@ -1,5 +1,6 @@
-import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+
+import { violations } from "./browser";
 
 /** One page of each kind the prep surface produces. */
 const PAGES = [
@@ -17,15 +18,7 @@ const PAGES = [
 for (const target of PAGES) {
   test(`${target.name} has no accessibility violations`, async ({ page }) => {
     await page.goto(target.path);
-    const results = await new AxeBuilder({ page })
-      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
-      .analyze();
-
-    expect(
-      results.violations.map(
-        (violation) => `${violation.id}: ${violation.help}`,
-      ),
-    ).toEqual([]);
+    expect(await violations(page)).toEqual([]);
   });
 }
 

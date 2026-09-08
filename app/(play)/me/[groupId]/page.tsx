@@ -4,6 +4,7 @@ import { type Metadata } from "next";
 
 import { sessions } from "@/content";
 import { findGroup } from "@/lib/db/groups";
+import { liveRunForGroup } from "@/lib/db/meetings";
 import { listEntries } from "@/lib/db/workbook";
 import { createClient } from "@/lib/supabase/server";
 
@@ -22,7 +23,10 @@ export default async function WorkbookIndex({
   const group = await findGroup(supabase, groupId);
   if (!group) notFound();
 
-  const entries = await listEntries(supabase, groupId);
+  const [entries, live] = await Promise.all([
+    listEntries(supabase, groupId),
+    liveRunForGroup(supabase, groupId),
+  ]);
   const written = new Set(
     entries
       .filter((entry) => entry.body.trim() !== "")
@@ -38,6 +42,17 @@ export default async function WorkbookIndex({
         Your workbook. Nobody else can read what you write here — not the group,
         not your leader. They can see that you have written, and that is all.
       </p>
+
+      {live ? (
+        <p className="mt-5 mb-0">
+          <Link
+            href={`/room/${live.id}`}
+            className="block rounded-xl bg-teal px-5 py-4 text-lg font-semibold text-on-violet no-underline"
+          >
+            Session {String(live.sessionNumber).padStart(2, "0")} is running now
+          </Link>
+        </p>
+      ) : null}
 
       <ol className="m-0 mt-6 list-none border-t border-rule p-0">
         {sessions.map((session) => (

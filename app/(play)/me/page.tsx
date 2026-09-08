@@ -5,6 +5,7 @@ import { type Metadata } from "next";
 import { AttachEmailForm } from "@/components/account/attach-email-form";
 import { signOut } from "@/lib/actions/auth";
 import { findProfile, listGroups } from "@/lib/db/groups";
+import { liveRuns } from "@/lib/db/meetings";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -17,9 +18,10 @@ export default async function MePage() {
   const { data } = await supabase.auth.getUser();
   if (!data.user) redirect("/join");
 
-  const [profile, groups] = await Promise.all([
+  const [profile, groups, live] = await Promise.all([
     findProfile(supabase, data.user.id),
     listGroups(supabase),
+    liveRuns(supabase),
   ]);
   const active = groups.filter((group) => group.archivedAt === null);
   const anonymous = data.user.is_anonymous ?? false;
@@ -29,6 +31,20 @@ export default async function MePage() {
       <h1 className="mt-8 font-serif text-3xl leading-tight font-semibold [font-variation-settings:'SOFT'_22,'WONK'_1]">
         {profile?.displayName ?? "You"}
       </h1>
+
+      {/* First thing on the screen, because it is read in a dark room by
+          someone who has just been told to get their phone out. */}
+      {live.map((run) => (
+        <p key={run.id} className="mt-5 mb-0">
+          <Link
+            href={`/room/${run.id}`}
+            className="block rounded-xl bg-teal px-5 py-4 text-lg font-semibold text-on-violet no-underline"
+          >
+            Join {run.groupName} — Session{" "}
+            {String(run.sessionNumber).padStart(2, "0")} is running now
+          </Link>
+        </p>
+      ))}
 
       <h2 className="mt-6 font-sans text-sm font-extrabold text-ink-soft">
         Your groups

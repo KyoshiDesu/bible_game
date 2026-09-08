@@ -13,6 +13,7 @@ import {
   type RoomController,
   type RoomResult,
   type RoomState,
+  type Tie,
   type Unsubscribe,
   type VoteResult,
 } from "./client";
@@ -32,6 +33,7 @@ interface Vote {
 
 export class FakeRoom implements RoomClient, RoomController {
   private run: Run = { state: "idle", currentBeat: 0 };
+  private tie: Tie | null = null;
   private readonly votes: Vote[] = [];
   private readonly results: BeatResult[] = [];
   private readonly listeners = new Set<(state: RoomState) => void>();
@@ -98,6 +100,13 @@ export class FakeRoom implements RoomClient, RoomController {
     if (!beat) return Promise.resolve({ ok: false, reason: "No such beat." });
 
     const resolution = resolveVotes(this.votesFor(this.run.currentBeat), beat);
+    // Set before the transition so the tie and the state it explains are
+    // announced together, exactly as one database transaction writes them.
+    this.tie =
+      resolution.kind === "tie"
+        ? { tied: [...resolution.tied], tally: resolution.tally }
+        : null;
+
     const applied = this.apply({ type: "close", resolution });
     if (applied.ok && resolution.kind === "winner") {
       this.results.push({
@@ -123,6 +132,7 @@ export class FakeRoom implements RoomClient, RoomController {
     const tied = resolution.kind === "tie" ? resolution.tied : [];
     const applied = this.apply({ type: "breakTie", choice, tied });
     if (!applied.ok) return Promise.resolve(applied);
+    this.tie = null;
 
     this.results.push({
       beatIndex: beat.index,
@@ -135,6 +145,7 @@ export class FakeRoom implements RoomClient, RoomController {
   }
 
   advance(): Promise<RoomResult> {
+    this.tie = null;
     return Promise.resolve(this.apply({ type: "advance" }));
   }
 
@@ -170,6 +181,7 @@ export class FakeRoom implements RoomClient, RoomController {
       state: this.run.state,
       currentBeat: this.run.currentBeat,
       results: [...this.results],
+      tie: this.tie,
     };
   }
 

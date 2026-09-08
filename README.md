@@ -12,12 +12,14 @@ Plan: [`docs/superpowers/plans/2026-09-07-press-start-web-app-plan.md`](docs/sup
 
 ## Status
 
-**Phase 5 — the room engine, headless.** The live session's state machine,
-tally resolution, and tie handling, as pure functions and as Postgres functions
-under a row lock — with Session 1's scenario authored as the fixture so the
-engine was built against content that will ship. No UI and no realtime yet:
-phase 6 puts this on a projector and on phones. On top of phase 4's workbook,
-phase 3's groups, and phase 2's static curriculum.
+**Phase 6 — the live surfaces.** The projector and the phone, on top of phase
+5's engine. A leader starts a meeting, drives it from a clicker, and the room
+votes; state rides Postgres Changes and live counts are broadcast by the
+database itself. When the wifi goes, it says so and keeps working: every screen
+renders from the database on load, the leader's controls are server actions
+rather than socket traffic, and the same case study runs as a show-of-hands
+deck that needs no network at all. On top of phase 4's workbook, phase 3's
+groups, and phase 2's static curriculum.
 
 ## Getting started
 
@@ -50,29 +52,31 @@ machine: read them at <http://127.0.0.1:54324>.
 
 ## Scripts
 
-| Command                     | What it does                                        |
-| --------------------------- | --------------------------------------------------- |
-| `npm run dev`               | Development server                                  |
-| `npm run build`             | Production build                                    |
-| `npm run typecheck`         | `tsc --noEmit`                                      |
-| `npm run lint`              | ESLint                                              |
-| `npm run content:check`     | Validates `content/` against its schemas            |
-| `npm run format`            | Prettier, writing in place                          |
-| `npm run test`              | Vitest, once                                        |
-| `npm run test:watch`        | Vitest, watching                                    |
-| `npm run test:rls`          | Row-level security, against local Supabase          |
-| `npm run test:e2e`          | Playwright (builds and serves the app itself)       |
-| `npm run test:e2e:identity` | Signing in and joining, against local Supabase      |
-| `npm run supabase:env`      | Prints the local stack's settings, for `.env.local` |
+| Command                     | What it does                                                |
+| --------------------------- | ----------------------------------------------------------- |
+| `npm run dev`               | Development server                                          |
+| `npm run build`             | Production build                                            |
+| `npm run typecheck`         | `tsc --noEmit`                                              |
+| `npm run lint`              | ESLint                                                      |
+| `npm run content:check`     | Validates `content/` against its schemas                    |
+| `npm run format`            | Prettier, writing in place                                  |
+| `npm run test`              | Vitest, once                                                |
+| `npm run test:watch`        | Vitest, watching                                            |
+| `npm run test:rls`          | Row-level security, against local Supabase                  |
+| `npm run test:e2e`          | Playwright (builds and serves the app itself)               |
+| `npm run test:e2e:supabase` | Joining, the workbook, and the room, against local Supabase |
+| `npm run supabase:env`      | Prints the local stack's settings, for `.env.local`         |
 
 Playwright needs its browser once: `npx playwright install chromium`.
 
 CI runs typecheck, lint, format check, content validation, unit tests, and
 build on every pull request; end-to-end tests in a second job; and the
-row-level-security suite and the joining tests in a third, against a Supabase
-that job starts itself. The end-to-end suite includes a content-parity check
-that asserts every field of every session reaches the DOM, and an axe pass over
-one page of each kind.
+row-level-security suite and the Supabase-backed end-to-end tests in a third,
+against a Supabase that job starts itself. The end-to-end suite includes a
+content-parity check that asserts every field of every session reaches the DOM,
+and an axe pass over one page of each kind — including the projector's own
+palette, through the show-of-hands deck, which renders statically and so can be
+checked without a database.
 
 ## Layout
 
@@ -83,19 +87,25 @@ app/
   (prep)/            the leader's surface: overview, sessions, handbook, materials
     sessions/[number]/  a route per pane, so a pane can be linked to
   search-index.json/ the search index, prerendered to a static file
-  (play)/            the participant's surface: joining, and the workbook
+  (present)/         the projector: one leader, large type, driven by a clicker
+    present/[runId]/    a live run
+    deck/[scenarioId]/  the same case study on a show of hands, prerendered
+  (play)/            the participant's surface: joining, the room, the workbook
+    room/[runId]/       a phone during a live scenario
   auth/confirm/      where a magic link lands
 content/             the curriculum as typed data — no React, no formatting
   schema.ts          Zod schemas and the types every surface renders against
   sessions/          one module per session, plus the ordered index
   scenarios/         the playable form of a session's case study
 components/prep/     the prep surface's own components
+components/present/  the projector and the show-of-hands deck
+components/play/     the participant's room
 components/account/  sign-in, joining, and group management forms
 components/workbook/ the autosaving fields and the rule-of-play editor
 components/ui/       shadcn/ui components
 lib/supabase/        client factories: browser, server, admin, session refresh
 lib/db/              typed data access, one module per aggregate
-lib/room/            the live session: state machine, client interface, fake
+lib/room/            the live session: state machine, transports, the hook
 lib/actions/         server actions; typed results, never thrown errors
 lib/                 typed logic; no React, no SQL at the call site
 supabase/            migrations, local config, and the email templates
@@ -104,9 +114,6 @@ tests/               unit tests that are not colocated with a module
 e2e/                 Playwright specs
 docs/                design and plan
 ```
-
-The presenter (`app/(present)`) and participant (`app/(play)`) route groups
-arrive in phases 6 and 3.
 
 ## Hosted projects
 
@@ -210,6 +217,33 @@ in the history of this repository if it is ever needed again.
 - Scenario content stays in the repository, so the database functions do not
   know what a beat contains. Choice keys and beat counts are parameters, and the
   functions verify what they can rather than pretending to know the rest.
+- Two realtime channels, deliberately different in reliability. State rides
+  Postgres Changes on `scenario_runs` and `beat_results`, and a message on it is
+  a **nudge to refetch, never the new state**: a screen that renders a payload
+  it received is a screen that disagrees with every other screen the moment one
+  message goes missing. Live vote counts ride a private broadcast topic and are
+  best effort — losing them costs a number, not the meeting.
+- Counts are written by a database trigger, and `realtime.messages` has a read
+  policy for the counts topic and no write policy at all. No client can put a
+  number on the projector. Presence is the exception and lives on its own topic,
+  because Realtime authorises presence as a write — announcing that you are here
+  is saying something — so members may write there and nothing listens for
+  broadcast events on it.
+- The socket needs the caller's token before either channel joins, not after.
+  `realtime.setAuth()` is awaited in `lib/room/use-live-room.ts`; subscribing
+  first joins as nobody, the private channel is refused, and the room silently
+  hears nothing at all.
+- Leader controls and votes are server actions, not calls from the browser to
+  Supabase. That is what makes a dead socket survivable: an action is an
+  ordinary request to the application, so the meeting can be driven the whole
+  way through with the "live updates have stopped" banner on screen.
+- The degradation ladder, in order, and each rung is tested: realtime dies →
+  banner, and controls still work; the page is reloaded → the database is
+  authoritative and the screen is correct again; the network is gone entirely →
+  `/deck/[scenarioId]` is prerendered, imports nothing from Supabase, and runs
+  the same case study on a show of hands. The middleware gives its token refresh
+  a four-second deadline and swallows a failure, so a hall with associated wifi
+  and no internet cannot hang the pages that need no network.
 - Never create a Supabase client at module scope on the server. It carries the
   caller's session, and a shared one would carry it between people.
 - Prettier owns formatting, ESLint owns everything else, and `docs/` and
