@@ -12,12 +12,12 @@ Plan: [`docs/superpowers/plans/2026-09-07-press-start-web-app-plan.md`](docs/sup
 
 ## Status
 
-**Phase 4 — the workbook.** Participants write against each session and against
-the Session 10 rule of play; entries autosave and are private to their author.
-A leader sees who has written and never what. On top of phase 3's leaders,
-groups, and join codes, and phase 2's static curriculum. Phase 5 builds the room
-engine; phase 6 adds the presenter view that projects the slides this surface
-only lays out.
+**Phase 5 — the room engine, headless.** The live session's state machine,
+tally resolution, and tie handling, as pure functions and as Postgres functions
+under a row lock — with Session 1's scenario authored as the fixture so the
+engine was built against content that will ship. No UI and no realtime yet:
+phase 6 puts this on a projector and on phones. On top of phase 4's workbook,
+phase 3's groups, and phase 2's static curriculum.
 
 ## Getting started
 
@@ -88,12 +88,14 @@ app/
 content/             the curriculum as typed data — no React, no formatting
   schema.ts          Zod schemas and the types every surface renders against
   sessions/          one module per session, plus the ordered index
+  scenarios/         the playable form of a session's case study
 components/prep/     the prep surface's own components
 components/account/  sign-in, joining, and group management forms
 components/workbook/ the autosaving fields and the rule-of-play editor
 components/ui/       shadcn/ui components
 lib/supabase/        client factories: browser, server, admin, session refresh
 lib/db/              typed data access, one module per aggregate
+lib/room/            the live session: state machine, client interface, fake
 lib/actions/         server actions; typed results, never thrown errors
 lib/                 typed logic; no React, no SQL at the call site
 supabase/            migrations, local config, and the email templates
@@ -195,6 +197,19 @@ in the history of this repository if it is ever needed again.
   holds both to it, and `e2e/workbook.spec.ts` searches the rendered engagement
   page for the words a participant actually wrote. Widening either is a change
   to that migration, not a convenience query somewhere else.
+- The database is authoritative for a live session, not the leader's laptop.
+  Every screen renders from the `scenario_runs` row, and every transition goes
+  through a function that takes the row lock before it looks at anything. The
+  same rules exist twice on purpose: as pure functions in `lib/room/machine.ts`,
+  where every illegal transition is enumerated in a test, and in SQL, where two
+  requests can arrive at once.
+- A vote is written by `cast_vote`, never by an insert. The function takes a
+  shared lock on the run first, so a vote arriving mid-close either lands before
+  the tally is taken or is refused after it — there is no outcome where a vote
+  exists but is missing from what the room was shown.
+- Scenario content stays in the repository, so the database functions do not
+  know what a beat contains. Choice keys and beat counts are parameters, and the
+  functions verify what they can rather than pretending to know the rest.
 - Never create a Supabase client at module scope on the server. It carries the
   caller's session, and a shared one would carry it between people.
 - Prettier owns formatting, ESLint owns everything else, and `docs/` and

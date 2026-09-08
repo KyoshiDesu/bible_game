@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
+import { isScriptureReference } from "@/lib/scripture";
 import {
+  estimatePlaySeconds,
+  findScenario,
+  PLAY_TIME_BUDGET,
+  scenarioSchema,
+  scenarios,
   caseBank,
   caseBankEntrySchema,
   glossary,
@@ -197,4 +203,104 @@ describe("case bank", () => {
       2,
     );
   });
+});
+
+describe("scripture references", () => {
+  it("parses every anchor and supporting reference in the curriculum", () => {
+    for (const session of sessions) {
+      expect(
+        isScriptureReference(session.anchor.ref),
+        `session ${session.number} anchor: ${session.anchor.ref}`,
+      ).toBe(true);
+      for (const verse of session.support) {
+        expect(
+          isScriptureReference(verse.ref),
+          `session ${session.number} support: ${verse.ref}`,
+        ).toBe(true);
+      }
+    }
+  });
+});
+
+describe("scenarios", () => {
+  it("has one so far, authored in phase 5 as the engine's fixture", () => {
+    expect(scenarios).toHaveLength(1);
+    expect(findScenario("s1-delete-the-library")).toBeDefined();
+  });
+
+  it.each(scenarios.map((scenario) => [scenario.id, scenario] as const))(
+    "%s validates",
+    (_id, scenario) => {
+      expect(scenarioSchema.safeParse(scenario)).toMatchObject({
+        success: true,
+      });
+    },
+  );
+
+  it.each(scenarios.map((scenario) => [scenario.id, scenario] as const))(
+    "%s belongs to a session that exists",
+    (_id, scenario) => {
+      expect(findSession(scenario.sessionNumber)).toBeDefined();
+      expect(scenario.id.startsWith(`s${scenario.sessionNumber}-`)).toBe(true);
+    },
+  );
+
+  it.each(scenarios.map((scenario) => [scenario.id, scenario] as const))(
+    "%s fits inside the twelve minutes the plan gives a case study",
+    (_id, scenario) => {
+      const seconds = estimatePlaySeconds(scenario);
+      expect(seconds).toBeLessThanOrEqual(PLAY_TIME_BUDGET);
+      // Also a floor: a scenario that estimates at two minutes has not been
+      // written, it has been sketched.
+      expect(seconds).toBeGreaterThan(3 * 60);
+    },
+  );
+
+  it.each(scenarios.map((scenario) => [scenario.id, scenario] as const))(
+    "%s numbers its beats from zero, without gaps",
+    (_id, scenario) => {
+      expect(scenario.beats.map((beat) => beat.index)).toEqual(
+        scenario.beats.map((_beat, position) => position),
+      );
+    },
+  );
+
+  it.each(scenarios.map((scenario) => [scenario.id, scenario] as const))(
+    "%s gives every beat three or four distinct choices, keyed in order",
+    (_id, scenario) => {
+      for (const beat of scenario.beats) {
+        const keys = beat.choices.map((choice) => choice.key);
+        expect(keys).toEqual(["a", "b", "c", "d"].slice(0, keys.length));
+        expect(new Set(beat.choices.map((choice) => choice.label)).size).toBe(
+          keys.length,
+        );
+      }
+    },
+  );
+
+  it.each(scenarios.map((scenario) => [scenario.id, scenario] as const))(
+    "%s cites scripture that parses",
+    (_id, scenario) => {
+      for (const reference of scenario.closing.scriptureRefs) {
+        expect(isScriptureReference(reference), reference).toBe(true);
+      }
+    },
+  );
+
+  it.each(scenarios.map((scenario) => [scenario.id, scenario] as const))(
+    "%s gives the leader something to draw out at every choice",
+    (_id, scenario) => {
+      // The rule a machine cannot check is that two choices per beat are
+      // genuinely defensible. What it can check is that the author wrote a
+      // leader's note for every one of them, which is where that argument lives.
+      for (const beat of scenario.beats) {
+        for (const choice of beat.choices) {
+          expect(
+            choice.leaderNote.length,
+            `${beat.index}${choice.key}`,
+          ).toBeGreaterThan(80);
+        }
+      }
+    },
+  );
 });

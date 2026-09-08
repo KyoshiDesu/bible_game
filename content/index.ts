@@ -1,4 +1,6 @@
 export * from "./schema";
+export * from "./scenario-schema";
+export { scenarios, findScenario, scenariosForSession } from "./scenarios";
 export { sessions, findSession } from "./sessions";
 export { resourceGroups } from "./resources";
 export { caseBank } from "./case-bank";
