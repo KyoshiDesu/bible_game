@@ -22,12 +22,21 @@ const WRONG_CODE =
 /**
  * Joining: a code and a name, no email and no password.
  *
- * The order of operations matters. The code is checked with the server's own
- * client first, because `groups` is unreadable to anyone who is not already a
- * member — which is what keeps codes from being enumerable — and only then is
- * an anonymous user issued. Signing in first would mint a throwaway account on
- * every typo, and Supabase caps anonymous sign-ups per address: a room full of
- * people mistyping the code would exhaust the church's allowance between them.
+ * Two decisions live in the order of operations.
+ *
+ * The code is checked with the server's own client before anything else,
+ * because `groups` is unreadable to anyone who is not already a member — which
+ * is what keeps codes from being enumerable — and only then is an anonymous
+ * user issued. Signing in first would mint a throwaway account on every typo,
+ * and Supabase caps anonymous sign-ups per address: a room full of people
+ * mistyping would exhaust the church's allowance between them.
+ *
+ * And a correct code always works, however many wrong ones have come from that
+ * address. Twenty people typing six characters on phones will produce ten
+ * mistakes in a minute between them, and locking out the back of the room for
+ * the last of them is the exact failure the limit exists to prevent. The limit
+ * shapes what happens after a failure; it never stands between someone and a
+ * code they got right.
  */
 export async function joinGroup(
   _previous: ActionState,
@@ -41,16 +50,19 @@ export async function joinGroup(
   }
 
   const ip = await requesterIp();
-  if (await joinAttemptsExhausted(ip)) {
-    return failed(
-      `That is ${FAILED_JOINS_PER_MINUTE} wrong codes in a minute. Wait a moment, then try again.`,
-    );
-  }
 
-  if (!isJoinCode(code)) {
+  /** Records the failure, and names the limit once it has been reached. */
+  async function refuse(): Promise<ActionState> {
     await recordFailedJoin(ip);
+    if (await joinAttemptsExhausted(ip)) {
+      return failed(
+        `That is ${FAILED_JOINS_PER_MINUTE} wrong codes in a minute from this connection. Check the code on the screen before trying again.`,
+      );
+    }
     return failed(WRONG_CODE);
   }
+
+  if (!isJoinCode(code)) return refuse();
 
   const admin = createAdminClient();
   const { data: group, error: lookupError } = await admin
@@ -62,10 +74,7 @@ export async function joinGroup(
 
   if (lookupError)
     return failed("Something went wrong. Try again in a moment.");
-  if (!group) {
-    await recordFailedJoin(ip);
-    return failed(WRONG_CODE);
-  }
+  if (!group) return refuse();
 
   const supabase = await createClient();
   const existing = await supabase.auth.getUser();
@@ -85,10 +94,7 @@ export async function joinGroup(
     p_display_name: displayName,
   });
 
-  if (error) {
-    await recordFailedJoin(ip);
-    return failed(WRONG_CODE);
-  }
+  if (error) return refuse();
 
   revalidatePath("/me");
   redirect("/me");

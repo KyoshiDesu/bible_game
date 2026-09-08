@@ -42,7 +42,7 @@ export default async function MePage() {
         <ul className="m-0 mt-2 list-none border-t border-rule p-0">
           {active.map((group) => (
             <li key={group.id} className="border-b border-rule py-3">
-              {group.name}
+              <Link href={`/me/${group.id}`}>{group.name}</Link>
             </li>
           ))}
         </ul>
