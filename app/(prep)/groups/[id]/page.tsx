@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { type Metadata } from "next";
 
@@ -56,6 +57,14 @@ export default async function GroupPage({
       ) : null}
 
       <SectionHeading>Who has joined ({members.length})</SectionHeading>
+      {leads ? (
+        <p className="mt-0 mb-3 text-sm">
+          <Link href={`/groups/${group.id}/engagement`}>
+            See who has written in their workbook
+          </Link>{" "}
+          — counts and names, never what they wrote.
+        </p>
+      ) : null}
       <ul className="m-0 list-none border-t border-rule p-0">
         {members.map((member) => (
           <li

@@ -12,13 +12,12 @@ Plan: [`docs/superpowers/plans/2026-09-07-press-start-web-app-plan.md`](docs/sup
 
 ## Status
 
-**Phase 3 — identity, groups, and joining.** On top of the static prep surface:
-leaders sign in by magic link and run groups; participants join with a
-six-character code and a display name and nothing else. Schema, row-level
-security, and the join flow are in `supabase/migrations/`, guarded by a suite
-that authenticates as real users and asserts what they cannot reach. Phase 4
-adds the workbook; phase 6 adds the presenter view that projects the slides
-this surface only lays out.
+**Phase 4 — the workbook.** Participants write against each session and against
+the Session 10 rule of play; entries autosave and are private to their author.
+A leader sees who has written and never what. On top of phase 3's leaders,
+groups, and join codes, and phase 2's static curriculum. Phase 5 builds the room
+engine; phase 6 adds the presenter view that projects the slides this surface
+only lays out.
 
 ## Getting started
 
@@ -84,12 +83,14 @@ app/
   (prep)/            the leader's surface: overview, sessions, handbook, materials
     sessions/[number]/  a route per pane, so a pane can be linked to
   search-index.json/ the search index, prerendered to a static file
-  (play)/            the participant's surface: joining, and their own page
+  (play)/            the participant's surface: joining, and the workbook
   auth/confirm/      where a magic link lands
 content/             the curriculum as typed data — no React, no formatting
   schema.ts          Zod schemas and the types every surface renders against
   sessions/          one module per session, plus the ordered index
 components/prep/     the prep surface's own components
+components/account/  sign-in, joining, and group management forms
+components/workbook/ the autosaving fields and the rule-of-play editor
 components/ui/       shadcn/ui components
 lib/supabase/        client factories: browser, server, admin, session refresh
 lib/db/              typed data access, one module per aggregate
@@ -185,6 +186,15 @@ in the history of this repository if it is ever needed again.
   return, not through the request-scoped store, and must redirect with a
   relative path — `request.nextUrl` reports the canonical host rather than the
   one the browser used, and a cookie set for one host is not sent to the other.
+- Two policies in `supabase/migrations/` are pastoral decisions rather than
+  technical ones, and the migration says so at the top of the file. A
+  participant reads only their own workbook entries, and **the leader cannot
+  read a body at all** — not through the table, not through a join from the
+  roster, not through the engagement view, which is a `SECURITY DEFINER`
+  function returning counts and names and nothing else. `tests/rls/workbook.test.ts`
+  holds both to it, and `e2e/workbook.spec.ts` searches the rendered engagement
+  page for the words a participant actually wrote. Widening either is a change
+  to that migration, not a convenience query somewhere else.
 - Never create a Supabase client at module scope on the server. It carries the
   caller's session, and a shared one would carry it between people.
 - Prettier owns formatting, ESLint owns everything else, and `docs/` and

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { joinGroup } from "@/lib/actions/join";
 import { IDLE } from "@/lib/actions/result";
@@ -10,6 +10,11 @@ import { BUTTON, FIELD, FormNote } from "./form-note";
 
 export function JoinForm() {
   const [state, action, pending] = useActionState(joinGroup, IDLE);
+  // Controlled, because React resets an uncontrolled form after an action
+  // runs — and someone who has just mistyped six characters should not also
+  // have to retype their name.
+  const [code, setCode] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
   return (
     <form action={action} className="mt-6">
@@ -22,6 +27,8 @@ export function JoinForm() {
       <input
         id="code"
         name="code"
+        value={code}
+        onChange={(event) => setCode(event.target.value)}
         required
         inputMode="text"
         autoCapitalize="characters"
@@ -45,6 +52,8 @@ export function JoinForm() {
       <input
         id="displayName"
         name="displayName"
+        value={displayName}
+        onChange={(event) => setDisplayName(event.target.value)}
         required
         autoComplete="nickname"
         maxLength={60}

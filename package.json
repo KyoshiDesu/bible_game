@@ -16,7 +16,7 @@
     "test:watch": "vitest",
     "test:rls": "vitest run --config vitest.rls.config.ts",
     "test:e2e": "playwright test --project=content --project=chromium --project=mobile",
-    "test:e2e:identity": "playwright test --project=identity",
+    "test:e2e:supabase": "playwright test --project=supabase",
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
