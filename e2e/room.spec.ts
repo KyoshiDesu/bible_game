@@ -22,6 +22,14 @@ import { signInAsLeader, supabase } from "./leader";
  */
 const RUN_URL = /\/present\/[0-9a-f-]{36}$/;
 
+/** A leader's note as a reader would see it, if it ever reached a screen. */
+function asRead(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 interface Meeting {
   leader: Awaited<ReturnType<Browser["newPage"]>>;
   close: () => Promise<void>;
@@ -114,6 +122,14 @@ test("the projector and a phone run a whole scenario and agree at every beat", a
     );
     await expect(phone.getByTestId("room-chose")).toContainText(
       `The room chose ${letter}`,
+    );
+
+    // The consequence is projected and the leader's note never is. It is what
+    // the leader should draw out of the room, and this screen faces the room.
+    const projected = await leader.locator("body").innerText();
+    expect(projected).not.toContain(asRead(choice.leaderNote));
+    expect(await phone.locator("body").innerText()).not.toContain(
+      asRead(choice.leaderNote),
     );
 
     await leader

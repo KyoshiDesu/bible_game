@@ -9,13 +9,25 @@
  *   * Play time fits inside the twelve minutes the forty-minute plan gives the
  *     case study.
  *
- * The third rule — that at least two choices per beat are genuinely defensible
- * by a thoughtful Christian — cannot be checked by a machine and is an author
- * review item. It is the rule that decides whether the mechanic works at all.
+ * Two more rules decide whether the mechanic works at all, and neither can be
+ * checked here. They are the author review, and they are worth doing out loud
+ * with the ten scenarios open in curriculum order:
+ *
+ *   * At least two choices per beat are genuinely defensible by a thoughtful
+ *     Christian. A beat with one right answer and three wrong ones is a quiz,
+ *     and a room can smell it in about four seconds.
+ *   * Every choice's consequence lands the story where the next beat begins.
+ *     This is the one that breaks silently: a consequence that ends the season,
+ *     or withdraws the thing the next beat is about, leaves a room reading a
+ *     situation that could not have happened. Nine of the first ten scenarios
+ *     had one, and every one of them was invisible until the beats were read
+ *     back to back.
  */
 import { z } from "zod";
 
 import { findTrustedHtmlViolations } from "@/lib/trusted-html";
+
+import { SECONDS_PER_VOTE, WORDS_PER_MINUTE } from "./play-time";
 
 const authored = z
   .string()
@@ -71,12 +83,14 @@ export type Choice = z.infer<typeof choiceSchema>;
 export type Beat = z.infer<typeof beatSchema>;
 export type Scenario = z.infer<typeof scenarioSchema>;
 
-/** Read-aloud pace, in words per minute. */
-export const WORDS_PER_MINUTE = 140;
-/** How long a beat's vote is open, in seconds. */
-export const SECONDS_PER_VOTE = 30;
-/** The budget a scenario has, in seconds. */
-export const PLAY_TIME_BUDGET = 12 * 60;
+// The timing constants live in ./play-time, which imports nothing, so that a
+// client component can read one without pulling Zod along with it. Re-exported
+// here because this is where a reader looks for them.
+export {
+  WORDS_PER_MINUTE,
+  SECONDS_PER_VOTE,
+  PLAY_TIME_BUDGET,
+} from "./play-time";
 
 function words(...parts: string[]): number {
   return parts

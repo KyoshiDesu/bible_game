@@ -9,7 +9,8 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 
-import { type Scenario, SECONDS_PER_VOTE } from "@/content/scenario-schema";
+import { SECONDS_PER_VOTE } from "@/content/play-time";
+import { type Scenario } from "@/content/scenario-schema";
 import {
   advanceRun,
   breakTie,

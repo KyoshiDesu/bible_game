@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { isScriptureReference } from "@/lib/scripture";
 import {
   estimatePlaySeconds,
-  findScenario,
+  scenariosForSession,
   PLAY_TIME_BUDGET,
   scenarioSchema,
   scenarios,
@@ -22,6 +22,7 @@ import {
   units,
   findSession,
 } from "@/content";
+import { deckIndex, sessionIndex } from "@/content/session-index";
 
 /**
  * The counts below are the ones the extraction produced from
@@ -108,6 +109,34 @@ describe("schema", () => {
     expect(ruleOfPlaySchema.safeParse(ruleOfPlay)).toMatchObject({
       success: true,
     });
+  });
+});
+
+/*
+ * The client's copy of the session list.
+ *
+ * `content/session-index.ts` exists so that the navigation rail and the
+ * breadcrumb — both client components — do not pull the whole curriculum into
+ * every prep page's JavaScript. It is a literal, so this is what stops it
+ * drifting from the thing it is a summary of.
+ */
+describe("the session index the client is given", () => {
+  it("says exactly what the curriculum says", () => {
+    expect(sessionIndex).toEqual(
+      sessions.map((session) => ({
+        number: session.number,
+        title: session.title,
+      })),
+    );
+  });
+
+  it("lists exactly the decks that exist", () => {
+    expect(deckIndex).toEqual(
+      scenarios.map((scenario) => ({
+        id: scenario.id,
+        caseTitle: scenario.caseTitle,
+      })),
+    );
   });
 });
 
@@ -223,10 +252,33 @@ describe("scripture references", () => {
 });
 
 describe("scenarios", () => {
-  it("has one so far, authored in phase 5 as the engine's fixture", () => {
-    expect(scenarios).toHaveLength(1);
-    expect(findScenario("s1-delete-the-library")).toBeDefined();
+  it("covers the whole curriculum, in its own order", () => {
+    expect(scenarios).toHaveLength(sessions.length);
+    expect(scenarios.map((scenario) => scenario.sessionNumber)).toEqual(
+      sessions.map((session) => session.number),
+    );
+    for (const session of sessions) {
+      expect(scenariosForSession(session.number)).toHaveLength(1);
+    }
   });
+
+  it.each(scenarios.map((scenario) => [scenario.id, scenario] as const))(
+    "%s takes its scripture from its own session's texts",
+    (_id, scenario) => {
+      // The scenarios are derived from their session's primary case rather
+      // than invented alongside it, and this is the machine-checkable half of
+      // that claim: a scenario that cites a passage its session never opens
+      // has drifted away from the meeting it is supposed to be part of.
+      const session = findSession(scenario.sessionNumber);
+      const texts = new Set([
+        session?.anchor.ref,
+        ...(session?.support ?? []).map((support) => support.ref),
+      ]);
+      for (const reference of scenario.closing.scriptureRefs) {
+        expect(texts.has(reference), reference).toBe(true);
+      }
+    },
+  );
 
   it.each(scenarios.map((scenario) => [scenario.id, scenario] as const))(
     "%s validates",
@@ -303,4 +355,111 @@ describe("scenarios", () => {
       }
     },
   );
+});
+
+/*
+ * The scenario schema, shown not to be vacuous.
+ *
+ * Ten scenarios pass it, which is only reassuring if it is capable of failing.
+ * Each guard below is a mistake that would otherwise reach a room: a beat with
+ * nothing to choose between, a scenario that outlasts the twelve minutes the
+ * plan gives it, or markup in a label that is rendered as text on a phone.
+ */
+describe("scenario guards", () => {
+  const scenario = scenarios[0];
+
+  it("has a scenario to guard", () => {
+    expect(scenario).toBeDefined();
+  });
+
+  it("rejects a beat with fewer than three choices", () => {
+    const thin = {
+      ...scenario,
+      beats: scenario!.beats.map((beat) => ({
+        ...beat,
+        choices: beat.choices.slice(0, 2),
+      })),
+    };
+    expect(scenarioSchema.safeParse(thin).success).toBe(false);
+  });
+
+  it("rejects a beat with more than four", () => {
+    const first = scenario!.beats[0]!;
+    const crowded = {
+      ...scenario,
+      beats: [
+        {
+          ...first,
+          choices: [...first.choices, { ...first.choices[0]!, key: "e" }],
+        },
+        ...scenario!.beats.slice(1),
+      ],
+    };
+    expect(scenarioSchema.safeParse(crowded).success).toBe(false);
+  });
+
+  it("rejects a choice key that is not a single letter", () => {
+    const first = scenario!.beats[0]!;
+    const result = scenarioSchema.safeParse({
+      ...scenario,
+      beats: [
+        {
+          ...first,
+          choices: first.choices.map((choice, position) =>
+            position === 0 ? { ...choice, key: "aa" } : choice,
+          ),
+        },
+        ...scenario!.beats.slice(1),
+      ],
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects markup in a label, which is rendered as text on a phone", () => {
+    const first = scenario!.beats[0]!;
+    const result = scenarioSchema.safeParse({
+      ...scenario,
+      beats: [
+        {
+          ...first,
+          choices: first.choices.map((choice, position) =>
+            position === 0 ? { ...choice, label: "<b>delete it</b>" } : choice,
+          ),
+        },
+        ...scenario!.beats.slice(1),
+      ],
+    });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toContain("plain-text");
+  });
+
+  it("rejects markup outside the allowlist in a consequence", () => {
+    const first = scenario!.beats[0]!;
+    const result = scenarioSchema.safeParse({
+      ...scenario,
+      beats: [
+        {
+          ...first,
+          choices: first.choices.map((choice, position) =>
+            position === 0
+              ? { ...choice, consequence: "<script>alert(1)</script>" }
+              : choice,
+          ),
+        },
+        ...scenario!.beats.slice(1),
+      ],
+    });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.message).toContain(
+      "disallowed tag <script>",
+    );
+  });
+
+  it("catches a scenario that has outgrown its twelve minutes", () => {
+    const padded = {
+      ...scenario!,
+      premise: `${scenario!.premise} ${"word ".repeat(2000)}`,
+    };
+    expect(estimatePlaySeconds(padded)).toBeGreaterThan(PLAY_TIME_BUDGET);
+  });
 });

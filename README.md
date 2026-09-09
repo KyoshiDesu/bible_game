@@ -12,13 +12,13 @@ Plan: [`docs/superpowers/plans/2026-09-07-press-start-web-app-plan.md`](docs/sup
 
 ## Status
 
-**Phase 6 — the live surfaces.** The projector and the phone, on top of phase
-5's engine. A leader starts a meeting, drives it from a clicker, and the room
-votes; state rides Postgres Changes and live counts are broadcast by the
-database itself. When the wifi goes, it says so and keeps working: every screen
-renders from the database on load, the leader's controls are server actions
-rather than socket traffic, and the same case study runs as a show-of-hands
-deck that needs no network at all. On top of phase 4's workbook, phase 3's
+**Phase 7 — the remaining nine scenarios.** All ten sessions are now playable.
+Each scenario is derived from its session's primary case study and leader's
+key, so the discussion questions and the theology still land after a room has
+played it — and `content:check` holds every one of them to three or four
+choices a beat, scripture drawn from its own session's texts, and a play time
+inside the twelve minutes the forty-minute plan gives a case study. On top of
+phase 6's projector and phone, phase 5's engine, phase 4's workbook, phase 3's
 groups, and phase 2's static curriculum.
 
 ## Getting started
@@ -96,7 +96,7 @@ app/
 content/             the curriculum as typed data — no React, no formatting
   schema.ts          Zod schemas and the types every surface renders against
   sessions/          one module per session, plus the ordered index
-  scenarios/         the playable form of a session's case study
+  scenarios/         the playable form of each session's primary case study
 components/prep/     the prep surface's own components
 components/present/  the projector and the show-of-hands deck
 components/play/     the participant's room
@@ -214,6 +214,16 @@ in the history of this repository if it is ever needed again.
   shared lock on the run first, so a vote arriving mid-close either lands before
   the tally is taken or is refused after it — there is no outcome where a vote
   exists but is missing from what the room was shown.
+- A scenario is derived from its session's primary case study and its leader's
+  key, not invented next to it, so that a room which has played it can still be
+  asked the session's own discussion questions afterwards. The machine-checkable
+  half of that is in `tests/content.test.ts`: every scripture reference a
+  scenario cites has to be one its session already opens.
+- `leaderNote` is what the leader should draw out of the room and the projector
+  faces the room, so it is never rendered on a presenter surface.
+  `tests/leader-notes.test.tsx` walks all ten scenarios through every slide of
+  the deck and reads the screen at each one — and asserts the consequences _are_
+  there, so a walk that silently stopped early would fail rather than pass.
 - Scenario content stays in the repository, so the database functions do not
   know what a beat contains. Choice keys and beat counts are parameters, and the
   functions verify what they can rather than pretending to know the rest.
