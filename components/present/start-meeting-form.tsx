@@ -44,7 +44,7 @@ export function StartMeetingForm({
             else setError(result.reason);
           });
         }}
-        className="rounded-lg bg-brass px-5 py-2.5 font-sans font-extrabold text-brass-ink-strong disabled:opacity-60"
+        className="rounded-lg bg-brass px-5 py-2.5 font-sans font-extrabold text-ink-on-brass disabled:opacity-60"
       >
         {pending ? "Starting…" : label}
       </button>

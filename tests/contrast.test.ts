@@ -51,6 +51,7 @@ describe("small text meets WCAG AA", () => {
     ["--brass-legible", "--surface", "references on a card"],
     ["--brass-legible", "--vellum", "the anchor reference on its card"],
     ["--brass-ink", "--brass-lite", "the question counter chip"],
+    ["--ink-on-brass", "--brass", "the projector's primary button"],
     ["--brass-ink-soft", "--page", "the christian lean label"],
     ["--brass-on-violet", "--violet-deep", "session numbers in the rail"],
     [

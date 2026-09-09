@@ -345,7 +345,7 @@ export function Presenter({
               type="button"
               onClick={forward}
               disabled={pending}
-              className="rounded-lg bg-brass px-6 py-3 font-sans text-lg font-extrabold text-brass-ink-strong disabled:opacity-60"
+              className="rounded-lg bg-brass px-6 py-3 font-sans text-lg font-extrabold text-ink-on-brass disabled:opacity-60"
             >
               {primary}
             </button>

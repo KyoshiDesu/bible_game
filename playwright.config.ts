@@ -6,7 +6,7 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORT}`;
 const CONTENT_SPEC = /prep-content\.spec\.ts/;
 // These need a local Supabase (`npx supabase start`), so they run under their
 // own project and their own script rather than failing the default suite.
-const SUPABASE_SPECS = /(identity|workbook|room)\.spec\.ts/;
+const SUPABASE_SPECS = /(identity|workbook|room|live-a11y)\.spec\.ts/;
 
 export default defineConfig({
   testDir: "./e2e",

@@ -6,10 +6,12 @@
     "**/*.css"
   ],
   "scripts": {
+    "setup": "bash scripts/setup.sh",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "supabase:env": "supabase status -o env --override-name api.url=NEXT_PUBLIC_SUPABASE_URL --override-name auth.publishable_key=NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY --override-name auth.secret_key=SUPABASE_SECRET_KEY --override-name db.url=SUPABASE_DB_URL | grep -E '^(NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY|SUPABASE_SECRET_KEY|SUPABASE_DB_URL)='",
+    "rehearse": "node --env-file-if-exists=.env --env-file-if-exists=.env.local node_modules/vite-node/vite-node.mjs -c vitest.config.ts scripts/rehearsal.ts --",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "content:check": "vitest run tests/content.test.ts",

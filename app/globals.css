@@ -59,6 +59,10 @@
   --brass-legible: #8f6425; /* 4.58:1 */
   --brass-on-violet: #b58a4b; /* 5.72:1 on --violet-deep */
   --on-violet-faint-legible: #958db1; /* 5.74:1 on --violet-deep */
+  /* Text on solid --brass. The ported --brass-ink-strong is 3.36:1 there,
+     which is the projector's own primary button, read from the back of a
+     hall. It stays as authored on --brass-lite, where it is fine. */
+  --ink-on-brass: #150e04; /* 4.83:1 on --brass */
 
   --vellum-rule: #e2d9c4;
   --brass-rule: #ddcba6;
@@ -137,6 +141,7 @@
   --color-ink-faint-legible: var(--ink-faint-legible);
   --color-brass-legible: var(--brass-legible);
   --color-brass-on-violet: var(--brass-on-violet);
+  --color-ink-on-brass: var(--ink-on-brass);
   --color-on-violet-faint-legible: var(--on-violet-faint-legible);
   --color-vellum-rule: var(--vellum-rule);
   --color-brass-rule: var(--brass-rule);

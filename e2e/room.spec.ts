@@ -1,14 +1,10 @@
-import {
-  expect,
-  test,
-  type APIRequestContext,
-  type Browser,
-} from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 import { session01Scenario as scenario } from "../content/scenarios/session-01";
 
 import { pressUntil } from "./browser";
-import { signInAsLeader, supabase } from "./leader";
+import { supabase } from "./leader";
+import { startMeeting } from "./meeting";
 
 /**
  * The live session, on two screens at once.
@@ -20,49 +16,12 @@ import { signInAsLeader, supabase } from "./leader";
  *
  * Needs a local Supabase: `npx supabase start`.
  */
-const RUN_URL = /\/present\/[0-9a-f-]{36}$/;
-
 /** A leader's note as a reader would see it, if it ever reached a screen. */
 function asRead(html: string): string {
   return html
     .replace(/<[^>]*>/g, "")
     .replace(/\s+/g, " ")
     .trim();
-}
-
-interface Meeting {
-  leader: Awaited<ReturnType<Browser["newPage"]>>;
-  close: () => Promise<void>;
-  code: string;
-}
-
-async function startMeeting(
-  browser: Browser,
-  request: APIRequestContext,
-  address: string,
-): Promise<Meeting> {
-  const context = await browser.newContext();
-  const leader = await context.newPage();
-
-  await signInAsLeader(leader, request, address);
-  await leader
-    .getByLabel("What should the group call you?")
-    .fill("Room Leader");
-  await leader.getByRole("button", { name: "Save" }).click();
-  await leader.getByLabel("Name this group").fill("Room group");
-  await leader.getByRole("button", { name: "Create group" }).click();
-  await expect(leader).toHaveURL(/\/groups\/[0-9a-f-]{36}$/);
-  const code = (await leader.locator("p.font-mono").first().innerText()).trim();
-
-  await leader.goto("/present");
-  await leader.getByRole("button", { name: "Start" }).first().click();
-  await expect(leader).toHaveURL(RUN_URL);
-
-  return {
-    leader,
-    code,
-    close: () => context.close(),
-  };
 }
 
 test("the projector and a phone run a whole scenario and agree at every beat", async ({
