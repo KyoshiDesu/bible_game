@@ -126,13 +126,13 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Joining, end to end
-        run: npm run test:e2e:identity
+      - name: Joining and the workbook, end to end
+        run: npm run test:e2e:supabase
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
-          name: playwright-report-identity
+          name: playwright-report-supabase
           path: playwright-report/
           retention-days: 7
 
