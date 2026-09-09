@@ -12,6 +12,8 @@ export interface LocalSupabase {
   url: string;
   publishableKey: string;
   secretKey: string;
+  /** Direct Postgres, for the tests that need two connections at once. */
+  dbUrl: string;
 }
 
 const OVERRIDES = [
@@ -21,6 +23,8 @@ const OVERRIDES = [
   "auth.publishable_key=NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
   "--override-name",
   "auth.secret_key=SUPABASE_SECRET_KEY",
+  "--override-name",
+  "db.url=SUPABASE_DB_URL",
 ];
 
 let cached: LocalSupabase | undefined;
@@ -29,8 +33,9 @@ function fromEnvironment(): LocalSupabase | undefined {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? process.env.SUPABASE_URL;
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   const secretKey = process.env.SUPABASE_SECRET_KEY;
-  if (!url || !publishableKey || !secretKey) return undefined;
-  return { url, publishableKey, secretKey };
+  const dbUrl = process.env.SUPABASE_DB_URL;
+  if (!url || !publishableKey || !secretKey || !dbUrl) return undefined;
+  return { url, publishableKey, secretKey, dbUrl };
 }
 
 function fromCli(): LocalSupabase {
@@ -63,12 +68,13 @@ function fromCli(): LocalSupabase {
   const url = values.get("NEXT_PUBLIC_SUPABASE_URL");
   const publishableKey = values.get("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY");
   const secretKey = values.get("SUPABASE_SECRET_KEY");
-  if (!url || !publishableKey || !secretKey) {
+  const dbUrl = values.get("SUPABASE_DB_URL");
+  if (!url || !publishableKey || !secretKey || !dbUrl) {
     throw new Error(
-      "`supabase status` did not report the keys the suites need.",
+      "`supabase status` did not report the settings the suites need.",
     );
   }
-  return { url, publishableKey, secretKey };
+  return { url, publishableKey, secretKey, dbUrl };
 }
 
 export function localSupabase(): LocalSupabase {

@@ -10,7 +10,11 @@ const {
   url: URL,
   publishableKey: PUBLISHABLE_KEY,
   secretKey: SECRET_KEY,
+  dbUrl: DB_URL,
 } = localSupabase();
+
+/** A direct Postgres connection, for the tests that need two at once. */
+export const databaseUrl = DB_URL;
 
 /** The server's client: bypasses RLS entirely. Never reaches a browser. */
 export function serviceClient(): SupabaseClient {
