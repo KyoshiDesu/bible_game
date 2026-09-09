@@ -148,6 +148,11 @@
 
   --shadow-press: var(--shadow-press);
 
+  /* The reveal, on the projector and on the deck. One short rise: a
+     consequence arriving is information, and it should read as an event rather
+     than a decoration. The reduced-motion block below cuts it to nothing. */
+  --animate-reveal: press-reveal 320ms ease-out both;
+
   /* next/font supplies the leading family; the rest is the source's stack. */
   --font-sans:
     var(--font-karla), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -194,6 +199,17 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@keyframes press-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(0.6rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer base {

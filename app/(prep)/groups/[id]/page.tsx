@@ -11,6 +11,7 @@ import {
 import { Callout } from "@/components/prep/callout";
 import { PageHeader, SectionHeading } from "@/components/prep/page-header";
 import { findGroup, roster } from "@/lib/db/groups";
+import { liveRunForGroup } from "@/lib/db/meetings";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Group" };
@@ -28,7 +29,10 @@ export default async function GroupPage({
   const group = await findGroup(supabase, id);
   if (!group) notFound();
 
-  const members = await roster(supabase, group.id);
+  const [members, live] = await Promise.all([
+    roster(supabase, group.id),
+    liveRunForGroup(supabase, group.id),
+  ]);
   const leads = group.leaderId === data.user.id;
 
   return (
@@ -54,6 +58,19 @@ export default async function GroupPage({
             Participants go to <b>/join</b> and type it in.
           </p>
         </div>
+      ) : null}
+
+      {leads && group.archivedAt === null ? (
+        <p className="mt-5 mb-0">
+          {live ? (
+            <Link href={`/present/${live.id}`}>
+              Session {String(live.sessionNumber).padStart(2, "0")} is running —
+              back to the projector
+            </Link>
+          ) : (
+            <Link href="/present">Run a meeting on the projector</Link>
+          )}
+        </p>
       ) : null}
 
       <SectionHeading>Who has joined ({members.length})</SectionHeading>
