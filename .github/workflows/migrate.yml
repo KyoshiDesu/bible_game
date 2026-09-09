@@ -1,0 +1,101 @@
+name: Migrate
+
+# Applying migrations is the one thing in this project that cannot be undone by
+# reverting a commit, so the two environments are treated differently on
+# purpose:
+#
+#   staging     — automatic, on every push to main. It is there to be broken.
+#   production  — never automatic. Run it by hand, having read the diff, and
+#                 having watched the same migration land on staging first.
+#
+# Both jobs skip themselves when their secrets are not set, so a fork and a
+# clean checkout do not get a wall of red for something they were never
+# supposed to be able to do.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Which project to migrate"
+        required: true
+        default: staging
+        type: choice
+        options: [staging, production]
+
+concurrency:
+  group: migrate-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  staging:
+    name: Staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >-
+      ${{ (github.event_name == 'push' ||
+           github.event.inputs.target == 'staging') &&
+          secrets.SUPABASE_ACCESS_TOKEN != '' &&
+          secrets.SUPABASE_STAGING_PROJECT_REF != '' }}
+
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link the staging project
+        run: >-
+          supabase link
+          --project-ref "${{ secrets.SUPABASE_STAGING_PROJECT_REF }}"
+          --password "${{ secrets.SUPABASE_STAGING_DB_PASSWORD }}"
+
+      # Printed before it is applied. When this job goes wrong, the log is the
+      # only record of what it was about to do.
+      - name: What is about to be applied
+        run: supabase migration list
+
+      - name: Apply
+        run: supabase db push
+
+  production:
+    name: Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Never on a push. A human asks for this, from the Actions tab, on purpose.
+    if: >-
+      ${{ github.event_name == 'workflow_dispatch' &&
+          github.event.inputs.target == 'production' &&
+          secrets.SUPABASE_ACCESS_TOKEN != '' &&
+          secrets.SUPABASE_PRODUCTION_PROJECT_REF != '' }}
+
+    # Attach a GitHub environment with a required reviewer to make this ask
+    # somebody before it runs. Without one it still needs a deliberate dispatch.
+    environment: production
+
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link the production project
+        run: >-
+          supabase link
+          --project-ref "${{ secrets.SUPABASE_PRODUCTION_PROJECT_REF }}"
+          --password "${{ secrets.SUPABASE_PRODUCTION_DB_PASSWORD }}"
+
+      - name: What is about to be applied
+        run: supabase migration list
+
+      - name: Apply
+        run: supabase db push

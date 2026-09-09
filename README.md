@@ -12,49 +12,60 @@ Plan: [`docs/superpowers/plans/2026-09-07-press-start-web-app-plan.md`](docs/sup
 
 ## Status
 
-**Phase 7 — the remaining nine scenarios.** All ten sessions are now playable.
-Each scenario is derived from its session's primary case study and leader's
-key, so the discussion questions and the theology still land after a room has
-played it — and `content:check` holds every one of them to three or four
-choices a beat, scripture drawn from its own session's texts, and a play time
-inside the twelve minutes the forty-minute plan gives a case study. On top of
-phase 6's projector and phone, phase 5's engine, phase 4's workbook, phase 3's
-groups, and phase 2's static curriculum.
+**Phase 8 — rehearsal and production.** In progress. `npm run setup` takes a
+clean checkout to a running application, `npm run rehearse` puts twelve
+simulated people in a group so a leader can run a whole scenario — including a
+beat rigged to come back tied — before doing it in front of anyone, and the
+live surfaces now go through axe in the states a room actually sees. Still
+outstanding: the hosted projects, the Vercel deployment, and a full session
+rehearsed end to end against staging.
 
 ## Getting started
 
-Requires Node 22.
+Requires Node 22 and Docker.
 
 ```bash
-npm install
-npm run dev
+npm run setup
 ```
 
-Then <http://localhost:3000>. The curriculum needs nothing else: the prep
-surface is static, the middleware skips session refresh when Supabase is not
-configured, and anything that reads or writes throws instead, naming the
-variable it wanted.
+That installs, starts Supabase, writes `.env.local`, and leaves the application
+running on <http://127.0.0.1:3000>. Everything it does is safe to run again.
 
-For anything with an account behind it — groups, joining, the workbook — run the
-database too. It needs Docker.
+If you only want to read the curriculum, `npm install && npm run dev` is enough:
+the prep surface is static, the middleware skips its session refresh when
+Supabase is not configured, and anything that reads or writes throws instead,
+naming the variable it wanted.
 
-```bash
-npx supabase start
-{ echo "NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000"; npm run --silent supabase:env; } > .env.local
-npm run test:rls            # the policies, against a real database
-```
-
+Magic links never leave the machine — read them at <http://127.0.0.1:54324>.
 `.env.local` takes precedence over `.env`, so development points at the local
 stack; delete it to go back to a hosted project. No key is written into this
-repository — `supabase:env` asks the CLI for them, and the test suites do the
-same when the environment does not already say. Magic links do not leave the
-machine: read them at <http://127.0.0.1:54324>.
+repository: `supabase:env` asks the CLI for them, and the test suites and the
+rehearsal do the same when the environment does not already say.
+
+### Rehearsing
+
+```bash
+npm run rehearse
+```
+
+Makes a group called **Rehearsal** with a join code of `REHEAR` and twelve
+participants in it, prints a sign-in link for the leader, and then waits. Open a
+vote on the projector and the room answers — staggered, the way a room does,
+because a counter that jumps from nought to twelve teaches nobody when a room
+has finished. One beat per run is rigged to tie, since breaking a tie is the
+thing a leader will otherwise meet for the first time with everybody watching.
+
+`--setup-only` seeds and exits. It refuses to touch anything that is not a local
+Supabase unless you say `--remote`, because it writes with the secret key and a
+group called Rehearsal in somebody's real church is not a small mistake.
 
 ## Scripts
 
 | Command                     | What it does                                                |
 | --------------------------- | ----------------------------------------------------------- |
+| `npm run setup`             | Clean checkout to a running application                     |
 | `npm run dev`               | Development server                                          |
+| `npm run rehearse`          | A group of twelve who vote when you open one                |
 | `npm run build`             | Production build                                            |
 | `npm run typecheck`         | `tsc --noEmit`                                              |
 | `npm run lint`              | ESLint                                                      |
@@ -127,6 +138,46 @@ dashboard of each hosted project:
 - **The anonymous sign-in rate limit raised.** The default is 30 per hour per
   IP address, and a group joins from one church wifi address in two minutes.
 
+## Deploying
+
+### The application
+
+Vercel, with a preview deployment per pull request. Four environment variables,
+and only the first three are needed for the prep surface to render:
+
+| Variable                               | Where it points             | Notes                                                                                                                                      |
+| -------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`             | the project                 | Public. Ships in the browser bundle.                                                                                                       |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | the project                 | Public by design; row-level security is what protects the data.                                                                            |
+| `NEXT_PUBLIC_SITE_URL`                 | the deployment's own origin | What magic links come back to. Wrong here means a link that signs nobody in.                                                               |
+| `SUPABASE_SECRET_KEY`                  | the project                 | **Server only.** Bypasses row-level security entirely. Never give it a `NEXT_PUBLIC_` prefix, and never import it from a client component. |
+
+Set `NEXT_PUBLIC_SITE_URL` per environment. A preview deployment pointed at
+production's origin will send a leader a link that lands somewhere else.
+
+### The database
+
+`.github/workflows/migrate.yml` applies migrations, and treats the two projects
+differently on purpose — a migration is the one thing here that reverting a
+commit does not undo.
+
+- **Staging** migrates automatically on every push to `main`.
+- **Production** never does. It runs from the Actions tab, by hand, having read
+  the diff and watched the same migration land on staging first. Attach a
+  GitHub environment named `production` with a required reviewer to make it ask
+  somebody as well.
+
+Both jobs skip themselves when their secrets are absent, so a fork and a clean
+checkout get silence rather than a wall of red. The secrets:
+
+| Secret                            | What it is                                           |
+| --------------------------------- | ---------------------------------------------------- |
+| `SUPABASE_ACCESS_TOKEN`           | A personal access token from the Supabase dashboard. |
+| `SUPABASE_STAGING_PROJECT_REF`    | The staging project's reference.                     |
+| `SUPABASE_STAGING_DB_PASSWORD`    | Its database password.                               |
+| `SUPABASE_PRODUCTION_PROJECT_REF` | The production project's reference.                  |
+| `SUPABASE_PRODUCTION_DB_PASSWORD` | Its database password.                               |
+
 ## The source file
 
 `press-start-curriculum.html` is the original single-file curriculum. Its
@@ -155,6 +206,10 @@ in the history of this repository if it is ever needed again.
   threshold applies and they pass. Text uses the `-legible` siblings and
   `--brass-on-violet` instead. `tests/contrast.test.ts` holds the ratios;
   `e2e/prep-a11y.spec.ts` runs axe over the rendered pages.
+  `--brass` needed one more sibling than the others: as a solid background it
+  takes `--ink-on-brass` rather than the ported `--brass-ink-strong`, which is
+  3.36:1 there. That is the projector's own primary button, read from the back
+  of a hall, and axe found it rather than anybody noticing.
 - Every page under `app/(prep)` renders statically. Search reads a prerendered
   `/search-index.json` fetched on the first keystroke, rather than bundling the
   curriculum into every page's JavaScript.
