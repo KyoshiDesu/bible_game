@@ -2,11 +2,11 @@
 
 import { usePathname } from "next/navigation";
 
-import { sessions } from "@/content";
+import { sessionIndex } from "@/content/session-index";
 import { navGroups, sessionPanes } from "@/lib/prep-nav";
 
 function crumbFor(pathname: string): string {
-  const session = sessions.find(
+  const session = sessionIndex.find(
     (candidate) =>
       pathname === `/sessions/${candidate.number}` ||
       pathname.startsWith(`/sessions/${candidate.number}/`),

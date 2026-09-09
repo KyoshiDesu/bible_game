@@ -1,4 +1,4 @@
-import { sessions } from "@/content";
+import { sessionIndex } from "@/content/session-index";
 
 export interface NavItem {
   href: string;
@@ -43,7 +43,7 @@ export const navGroups: NavGroup[] = [
   },
   {
     label: "Sessions",
-    items: sessions.map((session) => ({
+    items: sessionIndex.map((session) => ({
       href: sessionHref(session.number),
       label: session.title,
       number: sessionLabel(session.number),

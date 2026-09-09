@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 
-import { scenarios } from "@/content";
+import { deckIndex } from "@/content/session-index";
 
 /**
  * When the meeting cannot be reached at all.
@@ -47,13 +47,13 @@ export default function PresentError({
         >
           Try again
         </button>
-        {scenarios.map((scenario) => (
+        {deckIndex.map((deck) => (
           <Link
-            key={scenario.id}
-            href={`/deck/${scenario.id}`}
-            className="rounded-lg bg-brass px-5 py-2.5 font-sans font-extrabold text-brass-ink-strong no-underline"
+            key={deck.id}
+            href={`/deck/${deck.id}`}
+            className="rounded-lg border border-brass px-4 py-2 font-sans font-semibold text-on-violet no-underline"
           >
-            {scenario.caseTitle}, on a show of hands
+            {deck.caseTitle}
           </Link>
         ))}
       </div>

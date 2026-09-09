@@ -84,23 +84,31 @@ export default async function PresentIndex() {
                         {scenario.caseTitle}
                       </span>
                     </span>
-                    <StartMeetingForm
-                      groupId={group.id}
-                      sessionNumber={scenario.sessionNumber}
-                      scenarioId={scenario.id}
-                      label="Start"
-                    />
+                    <span className="flex items-center gap-5">
+                      <Link
+                        href={`/deck/${scenario.id}`}
+                        className="text-sm text-on-violet-faint-legible"
+                      >
+                        Show of hands
+                      </Link>
+                      <StartMeetingForm
+                        groupId={group.id}
+                        sessionNumber={scenario.sessionNumber}
+                        scenarioId={scenario.id}
+                        label="Start"
+                      />
+                    </span>
                   </li>
                 );
               })}
             </ul>
             <p className="mt-3 mb-0 text-sm text-on-violet-faint-legible">
-              The other nine sessions are not playable yet. Their case studies
-              are in the{" "}
+              Every session has a playable case study. Each session&rsquo;s
+              alternate case, and the twelve extras, are in the{" "}
               <Link href="/cases" className="text-on-violet-soft">
                 case bank
               </Link>{" "}
-              and run perfectly well on a show of hands.
+              and are read aloud rather than played.
             </p>
           </section>
         ))
